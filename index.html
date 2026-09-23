@@ -178,7 +178,7 @@ h1{margin:0;font-size:44px;line-height:1.1;font-weight:600;letter-spacing:0}
 .ttl .car{font-size:11px;transition:transform .25s}
 .ttl[aria-expanded="true"] .car{transform:rotate(180deg)}
 .ttl:focus-visible{outline:2px solid var(--color-accent);outline-offset:3px;border-radius:4px}
-.drop{position:absolute;left:10px;right:10px;top:calc(var(--headh,94px) - 4px);z-index:8;background:var(--color-bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:12px 14px 10px;font-family:var(--serif-jp);transform-origin:top center;animation:dropin .22s ease-out}
+.drop{position:absolute;left:10px;right:10px;top:calc(var(--headh,94px) - 4px);max-height:calc(100% - var(--headh,94px) - 16px);overflow-y:auto;scrollbar-width:none;z-index:8;background:var(--color-bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:12px 14px 10px;font-family:var(--serif-jp);transform-origin:top center;animation:dropin .22s ease-out}
 @keyframes dropin{from{opacity:0;transform:translateY(-6px) scaleY(.96)}to{opacity:1;transform:none}}
 .drop .dh{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:var(--faint);margin-bottom:6px}
 .drop .apps2{display:flex;gap:16px;font-size:12.5px;padding:2px 0 8px;border-bottom:1px solid var(--hair);margin-bottom:6px}
@@ -231,6 +231,30 @@ body.mobile .bloom{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
 /* 2) tap marker for testing: translucent grey dot that follows the finger */
 .tapdot{position:fixed;left:0;top:0;width:38px;height:38px;margin:-19px 0 0 -19px;border-radius:50%;background:rgba(32,30,29,.16);border:1px solid rgba(32,30,29,.28);pointer-events:none;z-index:99;opacity:0;transform:scale(.6);transition:opacity .18s,transform .18s}
 .tapdot.on{opacity:1;transform:scale(1)}
+.drop::-webkit-scrollbar{display:none}
+/* three parallel sub-levels inside the dropdown */
+.dtabs{display:flex;gap:18px;font-size:12.5px;margin:2px 0 10px}
+.dtabs button{background:none;border:0;padding:2px 0;cursor:pointer;color:var(--muted);border-bottom:1px solid transparent}
+.dtabs button[aria-selected="true"]{color:var(--color-text);border-bottom-color:var(--color-text);font-weight:600}
+.dtabs button:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+.map{display:block;width:100%;height:auto;border-radius:3px;background:#e6e4e1;touch-action:manipulation}
+.map .pin{cursor:pointer}
+.map .pin path{fill:#d23a2f;stroke:#f3f2f2;stroke-width:1.2}
+.map .pin.sel path{fill:#a8261d}
+.map .pin circle{fill:#f3f2f2}
+.map text{font-family:var(--serif-jp);fill:var(--faint)}
+.mapnote{display:flex;justify-content:space-between;font-size:10.5px;color:var(--faint);margin:6px 0 2px}
+.shop{border-top:1px solid var(--hair);margin-top:8px;padding-top:10px;animation:dropin .2s ease-out}
+.shop .sh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.shop b{display:block;font-size:15px;font-weight:600;line-height:1.3}
+.shop .cat{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--faint);margin-top:3px}
+.shop .cat i{width:7px;height:7px;border-radius:50%;display:block}
+.shop dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:9px 0 0;font-size:11.5px}
+.shop dt{color:var(--faint)} .shop dd{margin:0}
+.shop .acts{display:flex;gap:16px;justify-content:flex-end;margin-top:10px;font-size:12.5px}
+.shop .acts button,.shop .x2{background:none;border:0;padding:3px 0;cursor:pointer;color:var(--muted)}
+.shop .acts .go{color:var(--color-accent-700);font-weight:600}
+.drop .srow{grid-template-columns:36px 1fr auto;padding:7px 0}
 @media (min-width:600px){body.mobile .box{width:430px!important;margin:0 auto} body.mobile .phone{width:430px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
@@ -264,8 +288,21 @@ body.mobile .bloom{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
                 <button type="button" data-app="scroll" aria-pressed="true">フィード</button>
                 <button type="button" data-app="note" aria-pressed="false">ノート</button>
               </div>
-              <div class="dh"><span>種の記録</span><span id="dTotal">0 件</span></div>
-              <div class="prog" id="prog"></div>
+              <div class="dtabs" role="tablist">
+                <button type="button" role="tab" data-dt="rec" aria-selected="true">記録</button>
+                <button type="button" role="tab" data-dt="map" aria-selected="false">近くの教室</button>
+                <button type="button" role="tab" data-dt="col" aria-selected="false">図鑑</button>
+              </div>
+              <div class="dpanel" data-dp="rec">
+                <div class="dh"><span>種の記録</span><span id="dTotal">0 件</span></div>
+                <div class="prog" id="prog"></div>
+              </div>
+              <div class="dpanel" data-dp="map" hidden>
+                <svg class="map" id="map" viewBox="0 0 300 210" role="img" aria-label="近くのクラブ・教室の地図"></svg>
+                <div class="mapnote"><span id="mapCount"></span><span>赤いピンをタップ</span></div>
+                <div id="shop"></div>
+              </div>
+              <div class="dpanel" data-dp="col" hidden><div id="dCol"></div></div>
               <button type="button" class="sens" id="sens" hidden>重力センサーをオンにする</button>
             </div>
             <div class="feed" id="fScroll"></div>
@@ -409,8 +446,67 @@ prog.addEventListener('click',function(e){
   after(k, CAT[k].jp+' 関心 +3');
 });
 var drop=$('drop'), ttl=$('ttl');
+function setTab(name){
+  drop.querySelectorAll('[data-dt]').forEach(function(b){ b.setAttribute('aria-selected',b.dataset.dt===name?'true':'false'); });
+  drop.querySelectorAll('[data-dp]').forEach(function(p){ p.hidden=p.dataset.dp!==name; });
+  if(name==='map') drawMap(); if(name==='col') colRows($('dCol'),null);
+}
+drop.querySelector('.dtabs').addEventListener('click',function(e){ var b=e.target.closest('[data-dt]'); if(b) setTab(b.dataset.dt); });
+
+/* ---- nearby clubs & classes: a simple vector map; tap a red pin → shop info ---- */
+var PINXY={climb:[[60,40],[235,88],[272,30]], cook:[[120,72],[172,142],[38,112]], clay:[[215,162],[96,160],[262,186]],
+           run:[[76,78],[30,176],[140,190]], photo:[[186,30],[252,130],[112,34]], music:[[160,58],[206,106],[56,146]]};
+var HERE=[150,100], selPin=null;
+function walk(x,y){ var m=Math.round(Math.hypot(x-HERE[0],y-HERE[1])*9); return {m:m, min:Math.max(1,Math.round(m/80))}; }
+function drawMap(){
+  var svg=$('map'), h='';
+  h+='<rect width="300" height="210" fill="#e6e4e1"/>';
+  h+='<path d="M14 18 H112 Q124 18 124 30 V84 Q124 96 112 96 H26 Q14 96 14 84 Z" fill="#d7e0cf"/><text x="30" y="92" font-size="8">公園</text>';
+  h+='<path d="M-10 152 C 50 132 104 178 168 160 S 262 118 310 140" fill="none" stroke="#c6d7e0" stroke-width="13"/><text x="236" y="146" font-size="8">川</text>';
+  h+='<g stroke="#f6f5f4" stroke-width="7" fill="none" stroke-linecap="square"><path d="M0 60 H300"/><path d="M0 122 H300"/><path d="M90 0 V210"/><path d="M200 0 V210"/><path d="M0 206 L148 84"/></g>';
+  h+='<g stroke="#f6f5f4" stroke-width="3" fill="none"><path d="M0 30 H300"/><path d="M0 182 H300"/><path d="M40 0 V210"/><path d="M250 0 V210"/></g>';
+  h+='<rect x="192" y="52" width="16" height="16" rx="2" fill="#201e1d"/><text x="200" y="63.5" font-size="8.5" text-anchor="middle" style="fill:#f3f2f2">駅</text>';
+  h+='<circle cx="'+HERE[0]+'" cy="'+HERE[1]+'" r="12" fill="#0088b0" opacity=".16"/><circle cx="'+HERE[0]+'" cy="'+HERE[1]+'" r="4.5" fill="#0088b0" stroke="#f3f2f2" stroke-width="1.5"/>';
+  h+='<text x="'+(HERE[0]+9)+'" y="'+(HERE[1]+14)+'" font-size="8">現在地</text>';
+  var n=0;
+  KEYS.forEach(function(k){ CAT[k].shops.forEach(function(sh,i){
+    var xy=PINXY[k][i], id=k+':'+i, on=selPin===id, sc=on?1.35:1; n++;
+    h+='<g class="pin'+(on?' sel':'')+'" data-pin="'+id+'" transform="translate('+xy[0]+' '+xy[1]+') scale('+sc+')" role="button" aria-label="'+sh[0]+'">'+
+       '<rect x="-12" y="-28" width="24" height="30" fill="transparent"/>'+
+       '<path d="M0 0 C -5 -7 -8 -11 -8 -15 A8 8 0 1 1 8 -15 C 8 -11 5 -7 0 0 Z"/><circle cy="-15" r="2.8"/></g>';
+  }); });
+  svg.innerHTML=h;
+  $('mapCount').textContent='近くに '+n+' か所';
+}
+function showShop(id){
+  selPin=id; drawMap();
+  var k=id.split(':')[0], i=+id.split(':')[1], sh=CAT[k].shops[i], xy=PINXY[k][i], w=walk(xy[0],xy[1]);
+  $('shop').innerHTML='<div class="shop"><div class="sh"><span><b>'+sh[0]+'</b><span class="cat"><i style="background:'+col(k)+'"></i>'+CAT[k].jp+' · '+CAT[k].plant+'</span></span>'+
+    '<button type="button" class="x2" id="shopX" aria-label="閉じる">✕</button></div>'+
+    '<dl><dt>内容</dt><dd>'+sh[1]+'</dd><dt>距離</dt><dd>現在地から 約 '+w.m+' m · 徒歩 '+w.min+' 分</dd><dt>あなたの種</dt><dd>'+STAGE_JP[stageIdx(st[k].n)]+' · '+st[k].n+' 件</dd></dl>'+
+    '<div class="acts"><button type="button" data-act="route">ルート</button><button type="button" class="go" data-act="book">予約する</button></div></div>';
+}
+$('map').addEventListener('click',function(e){ var g=e.target.closest('[data-pin]'); if(g){ if(navigator.vibrate) navigator.vibrate(10); showShop(g.getAttribute('data-pin')); } });
+$('shop').addEventListener('click',function(e){
+  if(e.target.closest('#shopX')){ selPin=null; $('shop').textContent=''; drawMap(); return; }
+  var a=e.target.closest('[data-act]'); if(!a) return;
+  toast(a.dataset.act==='route'?'ルートを表示（デモはここまで）':'予約画面へ（デモはここまで）');
+});
+function openMapFor(k){ setDrop(true); setTab('map'); showShop(k+':0'); }
+
+/* ---- collection rows (shared by the dropdown and the interest sheet) ---- */
+function colRows(el,hk){
+  el.textContent='';
+  KEYS.forEach(function(q){
+    var cq=CAT[q], sq=st[q];
+    var row=document.createElement('div'); row.className='srow';
+    row.innerHTML='<span class="sd'+(sq.n?'':' dim')+'">'+artSVG(q,artKey(Math.max(1,sq.n)))+'</span>'+
+      '<span><b style="color:'+(q===hk?col(q):'inherit')+'">'+cq.jp+' · '+cq.plant+'</b><small>'+cq.lat+' · '+sq.n+' 件</small></span><span class="st">'+STAGE_JP[stageIdx(sq.n)]+'</span>';
+    el.appendChild(row);
+  });
+}
 function setDrop(open){ drop.hidden=!open; ttl.setAttribute('aria-expanded',open?'true':'false'); }
-ttl.addEventListener('click',function(e){ e.stopPropagation(); setDrop(drop.hidden); });
+ttl.addEventListener('click',function(e){ e.stopPropagation(); var open=drop.hidden; setDrop(open); if(open){ var cur=drop.querySelector('[data-dt][aria-selected="true"]').dataset.dt; setTab(cur); } });
 screen.addEventListener('pointerdown',function(e){ if(!drop.hidden && !e.target.closest('#drop') && !e.target.closest('#ttl')) setDrop(false); });
 drop.addEventListener('click',function(e){ var b=e.target.closest('[data-app]'); if(b) setApp(b.getAttribute('data-app')); });
 
@@ -738,14 +834,7 @@ function openSheet(k){
     r.addEventListener('click',function(){ toast('投稿を開く（デモはここまで）'); });
     rec.appendChild(r);
   });
-  var colp=$('pgCol'); colp.textContent='';
-  KEYS.forEach(function(q){
-    var cq=CAT[q], sq=st[q];
-    var row=document.createElement('div'); row.className='srow';
-    row.innerHTML='<span class="sd'+(sq.n?'':' dim')+'">'+artSVG(q,artKey(Math.max(1,sq.n)))+'</span>'+
-      '<span><b style="color:'+(q===k?col(q):'inherit')+'">'+cq.jp+' · '+cq.plant+'</b><small>'+cq.lat+' · '+sq.n+' 件</small></span><span class="st">'+STAGE_JP[stageIdx(sq.n)]+'</span>';
-    colp.appendChild(row);
-  });
+  colRows($('pgCol'),k);
   setDrop(false);
   sheetEl.setAttribute('data-on','1');
   requestAnimationFrame(function(){ showPage(0,false); });
@@ -764,7 +853,7 @@ function showBloom(k){
   $('bloom').hidden=false;
 }
 $('bX').addEventListener('click',function(){ $('bloom').hidden=true; });
-$('bGo').addEventListener('click',function(){ toast('→ 予約画面へ（demo はここまで）'); });
+$('bGo').addEventListener('click',function(){ $('bloom').hidden=true; if(bloomK) openMapFor(bloomK); });
 $('bOff').addEventListener('click',function(){ if(bloomK) st[bloomK].optout=true; $('bloom').hidden=true; toast('入口を OFF にした（植物はそのまま育つ）'); });
 
 /* ======================= seed mode ======================= */
@@ -808,7 +897,7 @@ function endDrag(){ if(!drag) return; drag=null; wrap.style.cursor='grab'; }
 wrap.addEventListener('pointerup',endDrag); wrap.addEventListener('pointercancel',endDrag);
 
 /* ======================= version menu ======================= */
-if(0)$('ver').addEventListener('change',function(){ var v=this.value; if(v==='1.3.2'){ location.href='v1-3-2.html'; return; } if(v==='1.3.1'){ location.href='v1-3-1.html'; return; } if(v==='1.3'){ location.href='v1-3.html'; return; } if(v!=='1.4') location.href='legacy.html?v='+v; });
+if(0)$('ver').addEventListener('change',function(){ var v=this.value; if(v==='1.4'){ location.href='v1-4.html'; return; } if(v==='1.3.2'){ location.href='v1-3-2.html'; return; } if(v==='1.3.1'){ location.href='v1-3-1.html'; return; } if(v==='1.3'){ location.href='v1-3.html'; return; } if(v!=='1.4.1') location.href='legacy.html?v='+v; });
 })();
 </script>
 
