@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#eae9e9">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>興味の種 スマホ版</title>
+<title>趣味の種 スマホ版</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@400;600&family=Noto+Serif+JP:wght@400;600&display=swap">
@@ -68,6 +68,9 @@ h1{margin:0;font-size:44px;line-height:1.1;font-weight:600;letter-spacing:0}
 .plus:disabled{color:var(--hair);cursor:default;text-decoration:none}
 .plus:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
 .hint{font-size:13px;line-height:1.9;color:var(--muted)}
+.ops{list-style:none;margin:0;padding:0;counter-reset:o;display:flex;flex-direction:column;gap:12px}
+.ops li{counter-increment:o;display:grid;grid-template-columns:22px 1fr;gap:6px;font-size:15px;line-height:1.7;text-wrap:pretty}
+.ops li::before{content:counter(o);font-family:"Source Serif 4",serif;font-size:19px;line-height:1.35;color:var(--color-accent)}
 
 .ver{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:16px;z-index:20}
 .ver select{font-family:var(--serif);font-size:12px;color:var(--muted);background:transparent;border:1px solid var(--hair);border-radius:var(--radius-lg);padding:4px 8px;cursor:pointer}
@@ -340,7 +343,7 @@ body.mobile .bloom{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
                 <button type="button" role="tab" aria-selected="false" data-pg="2">図鑑</button>
               </div>
               <div class="pages" id="pages">
-                <section class="pg" id="pgRec" aria-label="この興味のおすすめ"></section>
+                <section class="pg" id="pgRec" aria-label="この趣味のおすすめ"></section>
                 <section class="pg" id="pgMap" aria-label="近くのコミュニティ">
                   <svg class="map" id="map" viewBox="0 0 300 210" role="img" aria-label="近くのコミュニティの地図"></svg>
                   <div class="mapnote"><span id="mapCount"></span><span>赤いピンをタップ</span></div>
