@@ -257,6 +257,34 @@ body.mobile .bloom{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
 .drop .srow{grid-template-columns:36px 1fr auto;padding:7px 0}
 @media (min-width:600px){body.mobile .box{width:430px!important;margin:0 auto} body.mobile .phone{width:430px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+/* ---------- v1.4.3 additions ---------- */
+.htabs{display:flex;gap:18px;align-items:baseline}
+.htabs button{background:none;border:0;padding:2px 0;cursor:pointer;font-size:17px;font-weight:600;color:color-mix(in srgb,var(--color-text) 38%,transparent);font-family:var(--serif-jp);border-bottom:2px solid transparent}
+.htabs button[aria-pressed="true"]{color:var(--color-text);border-bottom-color:var(--color-text)}
+.htabs button:focus-visible{outline:2px solid var(--color-accent);outline-offset:3px}
+.tog{font-family:"Source Serif 4",var(--serif-jp)}
+.sheet{top:24%}
+.sheet .ihead{padding:2px 0 8px;border-bottom:1px solid var(--hair)}
+.sheet .tabs{margin-top:2px}
+.pg{padding-top:6px}
+.pg .map{margin-top:2px}
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding-top:4px}
+.cell{background:none;border:1px solid var(--hair);border-radius:var(--radius-lg);padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font-family:var(--serif-jp);color:var(--color-text)}
+.cell:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+.cell .ca{width:56px;height:56px}
+.cell .ca.dim{filter:grayscale(1);opacity:.28}
+.cell b{font-size:12px;font-weight:600}
+.cell small{font-size:10px;color:var(--faint)}
+.cell.cur{border-color:var(--color-text)}
+.cdet .back{background:none;border:0;padding:2px 0;cursor:pointer;font-size:12px;color:var(--color-accent-700);font-family:var(--serif-jp)}
+.cdet h5{margin:8px 0 2px;font-size:16px;font-weight:600}
+.cdet .lat{font-family:"Source Serif 4",serif;font-style:italic;font-size:11px;color:var(--faint)}
+.stages7{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 6px;margin-top:12px}
+.stages7 figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:3px}
+.stages7 .sa{width:58px;height:58px}
+.stages7 .sa.gray{filter:grayscale(1);opacity:.3}
+.stages7 figcaption{font-size:10px;color:var(--faint)}
+.stages7 figure.now figcaption{color:var(--color-text);font-weight:600}
 </style>
 </head>
 <body>
@@ -266,10 +294,6 @@ body.mobile .bloom{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
 
 <div class="page">
   <div class="pcol">
-    <div class="apps" role="group" aria-label="デモ用アプリ">
-      <button type="button" id="aScroll" aria-pressed="true">フィード</button>
-      <button type="button" id="aNote" aria-pressed="false">ノート</button>
-    </div>
     <div class="wrap" id="wrap">
       <div class="box" id="box">
         <div class="phone" id="phone">
@@ -277,33 +301,14 @@ body.mobile .bloom{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
             <div class="head">
               <div class="sbar"><span>9:41</span><i></i><span>100%</span></div>
               <div class="hrow">
-                <button type="button" class="ttl" id="ttl" aria-expanded="false" aria-controls="drop"><span id="appTitle">ホーム</span><span class="car" aria-hidden="true">▾</span></button>
+                <div class="htabs" role="group" aria-label="表示">
+                  <button type="button" data-app="scroll" aria-pressed="true">フィード</button>
+                  <button type="button" data-app="note" aria-pressed="false">ノート</button>
+                </div>
                 <button type="button" class="tog" id="tog" aria-pressed="true">
-                  <span id="togl">種 · ON</span><span class="track"><span class="knob"></span></span>
+                  <span id="togl">seed mode ON</span><span class="track"><span class="knob"></span></span>
                 </button>
               </div>
-            </div>
-            <div class="drop" id="drop" hidden>
-              <div class="apps2" role="group" aria-label="アプリ">
-                <button type="button" data-app="scroll" aria-pressed="true">フィード</button>
-                <button type="button" data-app="note" aria-pressed="false">ノート</button>
-              </div>
-              <div class="dtabs" role="tablist">
-                <button type="button" role="tab" data-dt="rec" aria-selected="true">記録</button>
-                <button type="button" role="tab" data-dt="map" aria-selected="false">近くの教室</button>
-                <button type="button" role="tab" data-dt="col" aria-selected="false">図鑑</button>
-              </div>
-              <div class="dpanel" data-dp="rec">
-                <div class="dh"><span>種の記録</span><span id="dTotal">0 件</span></div>
-                <div class="prog" id="prog"></div>
-              </div>
-              <div class="dpanel" data-dp="map" hidden>
-                <svg class="map" id="map" viewBox="0 0 300 210" role="img" aria-label="近くのクラブ・教室の地図"></svg>
-                <div class="mapnote"><span id="mapCount"></span><span>赤いピンをタップ</span></div>
-                <div id="shop"></div>
-              </div>
-              <div class="dpanel" data-dp="col" hidden><div id="dCol"></div></div>
-              <button type="button" class="sens" id="sens" hidden>重力センサーをオンにする</button>
             </div>
             <div class="feed" id="fScroll"></div>
             <div class="feed" id="fNote" hidden><div class="cols" id="cols"></div></div>
@@ -328,15 +333,22 @@ body.mobile .bloom{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
             <div class="sheet" id="sheet">
               <button type="button" class="x" id="sheetX" aria-label="閉じる">✕</button>
               <div class="grab"></div>
+              <div id="ihead"></div>
               <div class="tabs" role="tablist">
                 <button type="button" role="tab" aria-selected="true" data-pg="0">おすすめ</button>
-                <button type="button" role="tab" aria-selected="false" data-pg="1">図鑑</button>
+                <button type="button" role="tab" aria-selected="false" data-pg="1">近くのコミュニティ</button>
+                <button type="button" role="tab" aria-selected="false" data-pg="2">図鑑</button>
               </div>
               <div class="pages" id="pages">
                 <section class="pg" id="pgRec" aria-label="この興味のおすすめ"></section>
-                <section class="pg" id="pgCol" aria-label="種の図鑑"></section>
+                <section class="pg" id="pgMap" aria-label="近くのコミュニティ">
+                  <svg class="map" id="map" viewBox="0 0 300 210" role="img" aria-label="近くのコミュニティの地図"></svg>
+                  <div class="mapnote"><span id="mapCount"></span><span>赤いピンをタップ</span></div>
+                  <div id="shop"></div>
+                </section>
+                <section class="pg" id="pgCol" aria-label="図鑑"></section>
               </div>
-              <div class="pgdots" aria-hidden="true"><i class="on"></i><i></i></div>
+              <div class="pgdots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
             </div>
           </div>
         </div>
@@ -348,173 +360,70 @@ body.mobile .bloom{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
 <script>
 var ART={"climb": {"seed1": "<g fill=\"#C9A35B\"><path d=\"M50 62 L37.27 49.27 A18 18 0 0 1 43.26 45.31 Z\"/><path d=\"M50 62 L56.74 45.31 A18 18 0 0 1 62.73 49.27 Z\"/></g><circle cx=\"50\" cy=\"62\" r=\"4\" fill=\"#B5523B\"/>", "seed2": "<g fill=\"#C9A35B\"><path d=\"M50 62 L26.51 53.45 A25 25 0 0 1 40.63 38.82 Z\"/><path d=\"M50 62 L59.37 38.82 A25 25 0 0 1 73.49 53.45 Z\"/></g><circle cx=\"50\" cy=\"62\" r=\"5\" fill=\"#B5523B\"/>", "seed3": "<g fill=\"#C9A35B\"><path d=\"M50 62 L19.12 64.7 A31 31 0 0 1 39.4 32.87 Z\"/><path d=\"M50 62 L60.6 32.87 A31 31 0 0 1 80.88 64.7 Z\"/></g><circle cx=\"50\" cy=\"62\" r=\"6\" fill=\"#B5523B\"/>", "leaf": "<path d=\"M50 90 V60\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><path d=\"M34 60 A16 16 0 0 1 66 60 Z\" fill=\"#B5523B\"/>", "flower1": "<path d=\"M50 90 V38\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><path d=\"M38 70 A12 12 0 0 1 62 70 Z\" fill=\"#B5523B\"/><circle cx=\"50\" cy=\"34\" r=\"4.5\" fill=\"#C9A35B\"/>", "flower2": "<path d=\"M50 90 V38\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><path d=\"M38 70 A12 12 0 0 1 62 70 Z\" fill=\"#B5523B\"/><g fill=\"#C9A35B\"><circle cx=\"43\" cy=\"36\" r=\"6\"/><circle cx=\"57\" cy=\"36\" r=\"6\"/><circle cx=\"50\" cy=\"25\" r=\"6\"/></g>", "flower3": "<path d=\"M50 90 V42\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><path d=\"M38 72 A12 12 0 0 1 62 72 Z\" fill=\"#B5523B\"/><g fill=\"#C9A35B\"><circle cx=\"50\" cy=\"18\" r=\"8.5\"/><circle cx=\"39\" cy=\"29\" r=\"8.5\"/><circle cx=\"61\" cy=\"29\" r=\"8.5\"/><circle cx=\"50\" cy=\"40\" r=\"8.5\"/></g>"}, "cook": {"seed1": "<g fill=\"#2B2826\"><circle cx=\"46\" cy=\"52\" r=\"3.4\"/><circle cx=\"54\" cy=\"52\" r=\"3.4\"/><circle cx=\"50\" cy=\"59\" r=\"3.4\"/></g>", "seed2": "<circle cx=\"50\" cy=\"55\" r=\"12\" fill=\"#8FA88A\"/><g fill=\"#2B2826\"><circle cx=\"46\" cy=\"52\" r=\"3\"/><circle cx=\"54\" cy=\"52\" r=\"3\"/><circle cx=\"50\" cy=\"59\" r=\"3\"/></g>", "seed3": "<circle cx=\"50\" cy=\"55\" r=\"21\" fill=\"#8FA88A\"/><g fill=\"#2B2826\"><circle cx=\"43\" cy=\"50\" r=\"2.8\"/><circle cx=\"57\" cy=\"50\" r=\"2.8\"/><circle cx=\"50\" cy=\"62\" r=\"2.8\"/></g>", "leaf": "<path d=\"M50 90 V62\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#8FA88A\"><circle cx=\"40\" cy=\"58\" r=\"10\"/><circle cx=\"60\" cy=\"58\" r=\"10\"/></g>", "flower1": "<path d=\"M50 90 V30\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#8FA88A\"><circle cx=\"40\" cy=\"72\" r=\"10\"/><circle cx=\"60\" cy=\"72\" r=\"10\"/><circle cx=\"43\" cy=\"54\" r=\"7\"/><circle cx=\"57\" cy=\"54\" r=\"7\"/></g><rect x=\"47\" y=\"26\" width=\"6\" height=\"12\" rx=\"3\" fill=\"#B8A9C9\"/>", "flower2": "<path d=\"M50 90 V30\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#8FA88A\"><circle cx=\"40\" cy=\"72\" r=\"10\"/><circle cx=\"60\" cy=\"72\" r=\"10\"/><circle cx=\"43\" cy=\"54\" r=\"7\"/><circle cx=\"57\" cy=\"54\" r=\"7\"/></g><rect x=\"46\" y=\"16\" width=\"8\" height=\"28\" rx=\"4\" fill=\"#B8A9C9\"/>", "flower3": "<path d=\"M50 90 V30\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#8FA88A\"><circle cx=\"40\" cy=\"74\" r=\"10\"/><circle cx=\"60\" cy=\"74\" r=\"10\"/><circle cx=\"43\" cy=\"56\" r=\"7\"/><circle cx=\"57\" cy=\"56\" r=\"7\"/></g><g fill=\"#B8A9C9\"><rect x=\"45\" y=\"6\" width=\"10\" height=\"40\" rx=\"5\"/><rect x=\"33\" y=\"20\" width=\"8\" height=\"24\" rx=\"4\"/><rect x=\"59\" y=\"20\" width=\"8\" height=\"24\" rx=\"4\"/></g>"}, "clay": {"seed1": "<path d=\"M36 60 A14 14 0 0 1 64 60 V66 H36 Z\" fill=\"#C8574D\"/>", "seed2": "<g fill=\"#C8574D\"><path d=\"M50 46 A14 14 0 0 0 36 60 V66 H50 Z\" transform=\"translate(-2.5 0)\"/><path d=\"M50 46 A14 14 0 0 1 64 60 V66 H50 Z\" transform=\"translate(2.5 0)\"/></g>", "seed3": "<circle cx=\"50\" cy=\"57\" r=\"5\" fill=\"#2F5D4E\"/><g fill=\"#C8574D\"><path d=\"M50 46 A14 14 0 0 0 36 60 V66 H50 Z\" transform=\"translate(-4 0) rotate(-28 36 66)\"/><path d=\"M50 46 A14 14 0 0 1 64 60 V66 H50 Z\" transform=\"translate(4 0) rotate(28 64 66)\"/></g>", "leaf": "<path d=\"M50 90 V64\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#2F5D4E\"><path d=\"M0 0 A14 14 0 0 1 22 0 A14 14 0 0 1 0 0 Z\" transform=\"translate(50 66) rotate(-150)\"/><path d=\"M0 0 A14 14 0 0 1 22 0 A14 14 0 0 1 0 0 Z\" transform=\"translate(50 66) rotate(-30)\"/></g>", "flower1": "<path d=\"M50 90 V40\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#2F5D4E\"><path d=\"M0 0 A14 14 0 0 1 22 0 A14 14 0 0 1 0 0 Z\" transform=\"translate(50 78) rotate(-160) scale(1.1)\"/><path d=\"M0 0 A14 14 0 0 1 22 0 A14 14 0 0 1 0 0 Z\" transform=\"translate(50 64) rotate(-20) scale(1.1)\"/></g><circle cx=\"50\" cy=\"36\" r=\"6\" fill=\"#C8574D\"/>", "flower2": "<path d=\"M50 90 V40\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#2F5D4E\"><path d=\"M0 0 A14 14 0 0 1 22 0 A14 14 0 0 1 0 0 Z\" transform=\"translate(50 78) rotate(-160) scale(1.1)\"/><path d=\"M0 0 A14 14 0 0 1 22 0 A14 14 0 0 1 0 0 Z\" transform=\"translate(50 64) rotate(-20) scale(1.1)\"/></g><g fill=\"#C8574D\"><circle cx=\"44\" cy=\"32\" r=\"10\"/><circle cx=\"56\" cy=\"32\" r=\"10\"/></g>", "flower3": "<path d=\"M50 90 V44\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#2F5D4E\"><path d=\"M0 0 A14 14 0 0 1 22 0 A14 14 0 0 1 0 0 Z\" transform=\"translate(50 80) rotate(-160) scale(1.1)\"/><path d=\"M0 0 A14 14 0 0 1 22 0 A14 14 0 0 1 0 0 Z\" transform=\"translate(50 66) rotate(-20) scale(1.1)\"/></g><circle cx=\"50\" cy=\"30\" r=\"19\" fill=\"#C8574D\"/><circle cx=\"50\" cy=\"30\" r=\"9\" fill=\"#E0A097\"/>"}, "bike": {"seed1": "<rect x=\"42\" y=\"28\" width=\"16\" height=\"46\" rx=\"8\" fill=\"#6B4A34\"/><path d=\"M50 37 V65\" fill=\"none\" stroke=\"#DDAE3F\" stroke-width=\"1.6\" stroke-linecap=\"round\"/>", "seed2": "<ellipse cx=\"50\" cy=\"51\" rx=\"3.5\" ry=\"19\" fill=\"#DDAE3F\"/><g fill=\"#6B4A34\"><path d=\"M50 28 A8 8 0 0 0 42 36 V66 A8 8 0 0 0 50 74 Z\" transform=\"translate(-3 0)\"/><path d=\"M50 28 A8 8 0 0 1 58 36 V66 A8 8 0 0 1 50 74 Z\" transform=\"translate(3 0)\"/></g>", "seed3": "<ellipse cx=\"50\" cy=\"52\" rx=\"6\" ry=\"18\" fill=\"#DDAE3F\"/><g fill=\"#6B4A34\"><path d=\"M50 28 A8 8 0 0 0 42 36 V66 A8 8 0 0 0 50 74 Z\" transform=\"translate(-3 0) rotate(-24 50 74)\"/><path d=\"M50 28 A8 8 0 0 1 58 36 V66 A8 8 0 0 1 50 74 Z\" transform=\"translate(3 0) rotate(24 50 74)\"/></g>", "leaf": "<path d=\"M50 90 V64\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#7E8A4E\"><rect x=\"28\" y=\"59.5\" width=\"22\" height=\"9\" rx=\"4.5\" transform=\"rotate(20 50 64)\"/><rect x=\"50\" y=\"59.5\" width=\"22\" height=\"9\" rx=\"4.5\" transform=\"rotate(-20 50 64)\"/></g>", "flower1": "<path d=\"M50 90 V32\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.6\" stroke-linecap=\"round\"/><g fill=\"#7E8A4E\"><rect x=\"24\" y=\"71\" width=\"26\" height=\"10\" rx=\"5\" transform=\"rotate(20 50 76)\"/><rect x=\"50\" y=\"57\" width=\"26\" height=\"10\" rx=\"5\" transform=\"rotate(-20 50 62)\"/><circle cx=\"50\" cy=\"32\" r=\"7\"/></g><rect x=\"46\" y=\"20\" width=\"8\" height=\"8\" transform=\"rotate(45 50 24)\" fill=\"#DDAE3F\"/>", "flower2": "<path d=\"M50 90 V32\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.6\" stroke-linecap=\"round\"/><g fill=\"#7E8A4E\"><rect x=\"24\" y=\"73\" width=\"26\" height=\"10\" rx=\"5\" transform=\"rotate(20 50 78)\"/><rect x=\"50\" y=\"59\" width=\"26\" height=\"10\" rx=\"5\" transform=\"rotate(-20 50 64)\"/></g><rect x=\"39\" y=\"19\" width=\"22\" height=\"22\" transform=\"rotate(45 50 30)\" fill=\"#DDAE3F\"/><circle cx=\"50\" cy=\"30\" r=\"7\" fill=\"#6B4A34\"/>", "flower3": "<path d=\"M50 90 V34\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.6\" stroke-linecap=\"round\"/><g fill=\"#7E8A4E\"><rect x=\"24\" y=\"75\" width=\"26\" height=\"10\" rx=\"5\" transform=\"rotate(20 50 80)\"/><rect x=\"50\" y=\"61\" width=\"26\" height=\"10\" rx=\"5\" transform=\"rotate(-20 50 66)\"/></g><g fill=\"#DDAE3F\"><rect x=\"35\" y=\"15\" width=\"30\" height=\"30\"/><rect x=\"35\" y=\"15\" width=\"30\" height=\"30\" transform=\"rotate(45 50 30)\"/></g><circle cx=\"50\" cy=\"30\" r=\"10\" fill=\"#6B4A34\"/>"}, "photo": {"seed1": "<path d=\"M50 44 L45.59 28.62 A16 16 0 0 1 54.41 28.62 Z\" fill=\"#B9CCD8\"/><path d=\"M48.59 25.62 A16 16 0 0 1 57.41 25.62\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1\"/><path d=\"M50 72 V44\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.2\" stroke-linecap=\"round\"/><ellipse cx=\"50\" cy=\"76\" rx=\"2.6\" ry=\"6\" fill=\"#6B4A34\"/>", "seed2": "<path d=\"M50 44 L34.68 31.14 A20 20 0 0 1 65.32 31.14 Z\" fill=\"#B9CCD8\"/><path d=\"M37.68 28.14 A20 20 0 0 1 68.32 28.14\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1\"/><path d=\"M50 72 V44\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.2\" stroke-linecap=\"round\"/><ellipse cx=\"50\" cy=\"76\" rx=\"2.6\" ry=\"6\" fill=\"#6B4A34\"/>", "seed3": "<path d=\"M50 44 L27 44 A23 23 0 0 1 73 44 Z\" fill=\"#B9CCD8\"/><path d=\"M30 41 A23 23 0 0 1 76 41\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1\"/><path d=\"M50 72 V44\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.2\" stroke-linecap=\"round\"/><ellipse cx=\"50\" cy=\"76\" rx=\"2.6\" ry=\"6\" fill=\"#6B4A34\"/>", "leaf": "<g fill=\"#9AAE8C\"><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-150)\"/><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-90)\"/><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-30)\"/></g>", "flower1": "<path d=\"M50 88 V46\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.2\" stroke-linecap=\"round\"/><g fill=\"#9AAE8C\"><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-165) scale(0.8)\"/><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-125) scale(0.7)\"/><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-55) scale(0.7)\"/><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-15) scale(0.8)\"/></g><circle cx=\"50\" cy=\"42\" r=\"5\" fill=\"#E3C35A\"/>", "flower2": "<path d=\"M50 88 V46\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.2\" stroke-linecap=\"round\"/><g fill=\"#9AAE8C\"><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-165) scale(0.8)\"/><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-125) scale(0.7)\"/><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-55) scale(0.7)\"/><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-15) scale(0.8)\"/></g><circle cx=\"50\" cy=\"36\" r=\"11\" fill=\"#E3C35A\"/>", "flower3": "<path d=\"M50 88 V52\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.2\" stroke-linecap=\"round\"/><g fill=\"#9AAE8C\"><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-165) scale(0.8)\"/><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-125) scale(0.7)\"/><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-55) scale(0.7)\"/><path d=\"M0 0 A30 30 0 0 1 34 0 A30 30 0 0 1 0 0 Z\" transform=\"translate(50 88) rotate(-15) scale(0.8)\"/></g><circle cx=\"50\" cy=\"32\" r=\"20\" fill=\"#B9CCD8\"/><circle cx=\"54\" cy=\"28\" r=\"20\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1\"/>"}, "music": {"seed1": "<path d=\"M51.27 54.73 L51.27 32.73 A22 22 0 0 1 73.27 54.73 Z\" fill=\"#2B2826\"/>", "seed2": "<g fill=\"#2B2826\"><path d=\"M51.27 54.73 L51.27 32.73 A22 22 0 0 1 73.27 54.73 Z\" fill=\"#2B2826\"/><path d=\"M48.73 54.73 L26.73 54.73 A22 22 0 0 1 48.73 32.73 Z\" fill=\"#2B2826\"/></g>", "seed3": "<g fill=\"#2B2826\"><path d=\"M51.27 54.73 L51.27 32.73 A22 22 0 0 1 73.27 54.73 Z\" fill=\"#2B2826\"/><path d=\"M51.27 57.27 L73.27 57.27 A22 22 0 0 1 51.27 79.27 Z\" fill=\"#2B2826\"/><path d=\"M48.73 57.27 L48.73 79.27 A22 22 0 0 1 26.73 57.27 Z\" fill=\"#2B2826\"/><path d=\"M48.73 54.73 L26.73 54.73 A22 22 0 0 1 48.73 32.73 Z\" fill=\"#2B2826\"/></g>", "leaf": "<path d=\"M50 90 V64\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#4F7C6E\"><path d=\"M50 64 L30 64 A20 20 0 0 1 50 44 Z\" transform=\"rotate(-12 50 64)\"/><path d=\"M50 64 L70 64 A20 20 0 0 0 50 44 Z\" transform=\"rotate(12 50 64)\"/></g>", "flower1": "<path d=\"M50 92 C 38 78 62 62 50 46 M44 62 C 36 60 34 54 38 51 C 41 49 43 53 40 54\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#4F7C6E\"><path d=\"M45 80 L31 80 A14 14 0 0 1 45 66 Z\"/><path d=\"M55 66 L69 66 A14 14 0 0 0 55 52 Z\"/></g><path d=\"M47 46 L50 26 L53 46 Z\" fill=\"#34508C\"/>", "flower2": "<path d=\"M50 92 C 38 78 62 62 50 48 M44 62 C 36 60 34 54 38 51 C 41 49 43 53 40 54\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#4F7C6E\"><path d=\"M45 80 L31 80 A14 14 0 0 1 45 66 Z\"/><path d=\"M55 66 L69 66 A14 14 0 0 0 55 52 Z\"/></g><path d=\"M47 48 L53 48 L62 30 L38 30 Z\" fill=\"#34508C\"/><ellipse cx=\"50\" cy=\"30\" rx=\"12\" ry=\"3.5\" fill=\"#6F86B8\"/>", "flower3": "<path d=\"M50 92 C 38 78 62 62 50 49 M44 62 C 36 60 34 54 38 51 C 41 49 43 53 40 54\" fill=\"none\" stroke=\"#201e1d\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><g fill=\"#4F7C6E\"><path d=\"M45 80 L31 80 A14 14 0 0 1 45 66 Z\"/><path d=\"M55 66 L69 66 A14 14 0 0 0 55 52 Z\"/></g><circle cx=\"50\" cy=\"30\" r=\"19\" fill=\"#34508C\"/><circle cx=\"50\" cy=\"30\" r=\"5\" fill=\"#EFE8DA\"/>"}};
 (function(){
-/* ======================= data (v1.2 logic) ======================= */
-var MILES={settle:5, leaf:6, bud:9, half:12, bloom:15};
+/* ======================= data ======================= */
+/* 7 stages, one per counted post: seed1 · seed2 · seed3 · leaf (rooted) · flower1 · flower2 · flower3 (bloom) */
+var STAGES=['seed1','seed2','seed3','leaf','flower1','flower2','flower3'];
+var STAGE_JP=['まだ','種・一','種・二','種・三','葉','花・初','花・半','花・盛'];
+var ROOT=4, BLOOM=7;
+/* size of each stage in px — grows by percentage; the full bloom is the largest */
+var SIZE=[0, 36, 44, 54, 84, 106, 132, 168];
 var CAT={
   climb:{jp:'ボルダリング', plant:'カエデ', lat:'Acer palmatum',
-    shops:[['ROCKY 竹園店','徒歩 12 分 · 体験 2,200 円'],['B-PUMP つくば','自転車 8 分 · 初回講習'],['Gravity Lab','電車 20 分 · 学割']]},
+    shops:[['ROCKY 竹園店','ボルダリングジム · 体験 2,200 円'],['B-PUMP つくば','初回講習あり · 毎週木曜は初心者会'],['Gravity Lab','学割あり · 夜 23 時まで']]},
   cook:{jp:'自炊', plant:'バジル', lat:'Ocimum basilicum',
-    shops:[['八百屋 みのり','徒歩 6 分 · 量り売り'],['週末ファーマーズ市','土日 9–13 時'],['ハーブ専門店','駅前 · 苗 1 鉢 380 円']]},
+    shops:[['八百屋 みのり','量り売り · 旬の野菜'],['週末ファーマーズ市','土日 9–13 時'],['ハーブ専門店','苗 1 鉢 380 円 · 料理教室あり']]},
   clay:{jp:'陶芸', plant:'ツバキ', lat:'Camellia japonica',
     shops:[['土と火 陶芸工房','1 日体験 3,500 円'],['陶房 あさひ','轆轤 90 分 · 予約制'],['市民工芸センター','学生 1,200 円']]},
   bike:{jp:'自転車', plant:'ヒマワリ', lat:'Helianthus annuus',
-    shops:[['サイクルショップ 輪','徒歩 8 分 · 点検 1,000 円'],['レンタサイクル つくば','1 日 500 円 · 駅前'],['週末ライド会','土曜 8 時 · 初心者歓迎']]},
-  photo:{jp:'写真', plant:'タンポポ', lat:'Taraxacum officinale',
-    shops:[['暗室 ひかり','現像体験 2,800 円'],['中古カメラ 光陽','徒歩 14 分'],['市民ギャラリー','今週：風景写真展']]},
+    shops:[['サイクルショップ 輪','点検 1,000 円 · 週末ライド会'],['レンタサイクル つくば','1 日 500 円 · 駅前'],['週末ライド会','土曜 8 時 · 初心者歓迎']]},
+  photo:{jp:'撮影', plant:'タンポポ', lat:'Taraxacum officinale',
+    shops:[['暗室 ひかり','現像体験 2,800 円'],['中古カメラ 光陽','毎月の撮影散歩会'],['市民ギャラリー','今週：風景写真展']]},
   music:{jp:'音楽', plant:'アサガオ', lat:'Ipomoea nil',
-    shops:[['スタジオ ノア','1 時間 600 円'],['レコード 波','徒歩 7 分 · 中古'],['小屋 LIVE','今夜 19 時 · 学割']]}
+    shops:[['スタジオ ノア','1 時間 600 円'],['レコード 波','中古 · 月 1 回の試聴会'],['小屋 LIVE','今夜 19 時 · 学割']]}
 };
 var KEYS=Object.keys(CAT);
 function col(k){ return 'var(--cat-'+k+')'; }
-var STAGE_CN=['未开始','种子','种子','种子','定着','长叶','花苞','半开','盛开'];
-var STAGE_JP=['未着手','種 1','種 2','種 3','定着','葉','蕾','半開','満開'];
-function stageIdx(n){
-  if(n<=0) return 0; if(n<2) return 1; if(n<4) return 2; if(n<MILES.settle) return 3;
-  if(n<MILES.leaf) return 4; if(n<MILES.bud) return 5; if(n<MILES.half) return 6; if(n<MILES.bloom) return 7; return 8;
-}
-function seedState(n){ return n<2?1:(n<4?2:3); }
-var SEED_R=[0,18,22,27];
-
+var SEEDVB={"climb": {"seed1": "36.0 41.6 28.1 28.1", "seed2": "24.1 27.0 51.7 51.7", "seed3": "15.9 16.4 68.2 68.2"}, "cook": {"seed1": "41.9 47.4 16.3 16.3", "seed2": "36.8 41.8 26.4 26.4", "seed3": "26.9 31.9 46.2 46.2"}, "clay": {"seed1": "34.6 40.6 30.8 30.8", "seed2": "31.8 37.8 36.3 36.3", "seed3": "19.9 23.8 60.3 60.3"}, "bike": {"seed1": "24.7 25.7 50.6 50.6", "seed2": "24.7 25.7 50.6 50.6", "seed3": "18.1 22.7 63.8 63.8"}, "photo": {"seed1": "20.1 22.1 62.7 62.7", "seed2": "17.9 17.9 67.1 67.1", "seed3": "16.3 14.8 70.4 70.4"}, "music": {"seed1": "50.2 31.6 24.2 24.2", "seed2": "24.4 18.1 51.2 51.2", "seed3": "24.4 30.4 51.2 51.2"}};
 var SCROLL=[["photo", "film_no_hi", "フィルム1本、現像するまでの3日間。", "713", "1時間前"], ["climb", "iwaba_daily", "初心者向けボルダリング、5級の足づかい。", "4,509", "1時間前"], ["music", "yoru_no_record", "深夜のレコード、今日はこの1曲だけ。", "891", "1時間前"], ["bike", "pedal_asa", "朝の川沿いを20km。", "3,115", "1時間前"], ["cook", "yoru_no_daidoko", "深夜の油そば、タレは3つだけ。", "4,894", "1時間前"], ["clay", "rokuro_note", "轆轤で小鉢を挽く、朝の6分。", "595", "1時間前"], ["cook", "mainichi_gohan", "作り置き3品、日曜の40分でできる。", "4,847", "2時間前"], ["clay", "kama_no_hi", "窯出しの朝、釉薬の当たりはずれ。", "4,916", "2時間前"], ["bike", "ride_log", "初めてのロングライド、100km。", "3,369", "2時間前"], ["music", "studio_1h", "1時間600円、ひとりスタジオのすすめ。", "526", "2時間前"], ["photo", "kumo_photo", "曇りの日に人を撮るときの4つの立ち位置。", "1,931", "2時間前"], ["climb", "move_lab", "ヒールフック、腰の入れ方だけ直したら登れた。", "501", "2時間前"], ["clay", "tsuchi", "初めての轆轤、こんなに歪むもの？", "4,607", "3時間前"], ["music", "oto_memo", "3年使ったヘッドホン、ついに買い替え。", "5,953", "3時間前"], ["bike", "kawara_bike", "タイヤを28Cに替えたら快適に。", "634", "3時間前"], ["cook", "ao_kitchen", "八角をひとつ、煮込みが急に本格的に。", "4,743", "3時間前"], ["photo", "mado_film", "蓮の実とレンズ、形が似ている。", "608", "3時間前"], ["climb", "gym_day1", "ジム初日、シューズは半サイズ下で。", "5,190", "3時間前"], ["bike", "gravel_note", "雨の日は室内でローラー30分。", "4,422", "5時間前"], ["photo", "hikari_log", "夕方の光を追いかけた。", "4,175", "5時間前"], ["clay", "yakimono", "手びねりで湯呑みをひとつ。", "2,933", "5時間前"], ["climb", "outdoor_rock", "外岩デビュー、持っていくもの5つ。", "6,095", "5時間前"], ["cook", "hitorimeshi", "一人分の土鍋ごはん。", "3,796", "5時間前"], ["music", "band_sunday", "週末だけのバンド練習。", "2,478", "5時間前"], ["photo", "snap_walk", "散歩のついでに撮った街角。", "4,989", "8時間前"], ["bike", "commute_cycle", "坂道はギアを軽く、が正解だった。", "4,188", "8時間前"], ["cook", "pan_tane", "自家製サワードウ、7日目。", "4,870", "8時間前"], ["clay", "nendo_days", "素焼きが出た、2つ割れた。", "3,857", "8時間前"], ["climb", "nobori", "3ヶ月で8級から5級になった記録。", "683", "8時間前"], ["music", "piano_asa", "朝のピアノ、15分だけ。", "886", "8時間前"], ["music", "record_nami", "中古レコード屋で見つけた一枚。", "4,164", "12時間前"], ["climb", "hold_note", "ホールドの持ち方、ピンチとクリンプの違い。", "602", "12時間前"], ["photo", "lens_note", "50mm一本で一週間。", "1,907", "12時間前"], ["cook", "bento_log", "今週のお弁当、5日分。", "2,474", "12時間前"], ["clay", "yuuyaku", "釉薬の試し焼き、20色。", "1,179", "12時間前"], ["bike", "bike_shop_k", "夜ライドのライト、2灯あると安心。", "6,168", "12時間前"], ["climb", "chalk_bag", "チョークは粉か液体か問題。", "3,059", "1日前"], ["cook", "spice_shelf", "スパイス棚を整理した。", "5,712", "1日前"], ["music", "ear_log", "ライブハウスの最前列。", "3,236", "1日前"], ["clay", "te_bineri", "削りの工程がいちばん好き。", "2,010", "1日前"], ["photo", "darkroom_k", "暗室で初めてプリントした。", "1,356", "1日前"], ["bike", "hill_climb", "週末は霞ヶ浦を一周。", "799", "1日前"], ["music", "uta_note", "弾き語りを録音してみた。", "5,115", "2日前"], ["photo", "shikaku", "正方形で切り取る練習。", "4,759", "2日前"], ["clay", "kiln_side", "器に料理を盛ってみた。", "2,730", "2日前"], ["bike", "rinko_trip", "輪行して知らない町を走った。", "1,148", "2日前"], ["cook", "nokori_mono", "冷蔵庫の残りで一皿。", "5,776", "2日前"], ["climb", "v3_club", "V3完登、手がまだ震えている。", "4,342", "2日前"]];
 var NOTES=[["clay", "陶芸教室、1日体験レポート", "yakimono", "6,941", 190], ["music", "はじめてのレコードプレーヤー", "band_sunday", "1,234", 140], ["bike", "はじめての自転車の選び方", "gravel_note", "4,033", 150], ["climb", "クライミングシューズの選び方", "outdoor_rock", "1,576", 170], ["cook", "八角は結局何個入れる？", "hitorimeshi", "9,118", 120], ["photo", "フィルムカメラ、最初の1台", "hikari_log", "7,045", 160], ["bike", "パンク修理を自分でやってみた", "commute_cycle", "8,948", 175], ["climb", "指力を鍛える週2メニュー", "nobori", "2,019", 130], ["music", "ひとりスタジオの使い方", "piano_asa", "9,443", 120], ["clay", "釉薬の色見本まとめ", "nendo_days", "5,144", 125], ["cook", "一人暮らしでもちゃんと食べる一週間", "pan_tane", "9,269", 185], ["photo", "曇りの日の撮り方", "snap_walk", "3,051", 170], ["climb", "ジムの混む時間・空く時間", "hold_note", "9,683", 190], ["clay", "土の種類で何が変わる？", "yuuyaku", "7,514", 160], ["music", "ヘッドホン比較レビュー", "record_nami", "6,014", 185], ["photo", "構図の基本、三分割より大事なこと", "lens_note", "5,001", 130], ["bike", "通勤を自転車に変えて1ヶ月", "bike_shop_k", "4,160", 140], ["cook", "10分でできるトマト卵炒め", "bento_log", "3,035", 150], ["bike", "ロードとクロス、どっちがいい？", "hill_climb", "2,792", 120], ["cook", "失敗しない炊き込みごはん", "spice_shelf", "5,694", 175], ["clay", "割れない乾燥のさせ方", "te_bineri", "2,580", 170], ["music", "社会人バンドの続け方", "ear_log", "8,101", 150], ["climb", "外岩の暗黙のルール", "chalk_bag", "6,999", 125], ["photo", "中古レンズの選び方", "darkroom_k", "732", 190], ["music", "大人から始めるピアノ", "uta_note", "9,559", 175], ["cook", "包丁を研いだら料理が変わった", "nokori_mono", "7,391", 140], ["photo", "夜の街を手持ちで撮る", "shikaku", "4,752", 125], ["climb", "落ち方の練習、最初にやるべき", "v3_club", "6,410", 160], ["bike", "冬のサイクルウェア", "rinko_trip", "5,775", 185], ["clay", "手びねりと轆轤、どちらから？", "kiln_side", "459", 130], ["clay", "金継ぎ入門", "rokuro_note", "2,815", 190], ["climb", "ムーブ動画の撮り方", "iwaba_daily", "7,449", 170], ["music", "小さなライブハウスの楽しみ方", "yoru_no_record", "6,670", 140], ["photo", "現像に出すか自家現像か", "film_no_hi", "9,092", 160], ["bike", "サイクリングアプリ比較", "pedal_asa", "4,642", 150], ["cook", "作り置きが続くコツ", "yoru_no_daidoko", "2,333", 120], ["bike", "チェーンの掃除と注油", "ride_log", "287", 175], ["climb", "テーピングの巻き方3種", "move_lab", "8,035", 130], ["clay", "自宅でできる陶芸", "kama_no_hi", "9,742", 125], ["photo", "スマホでもできる光の読み方", "kumo_photo", "3,077", 170], ["music", "作業用プレイリスト", "studio_1h", "4,394", 120], ["cook", "だしパック比べてみた", "mainichi_gohan", "4,709", 185], ["music", "耳コピのコツ", "oto_memo", "6,611", 185], ["cook", "週末の朝ごはん記録", "ao_kitchen", "6,626", 150], ["clay", "作った器を使う一週間", "tsuchi", "6,547", 160], ["bike", "初心者向けのんびりコース", "kawara_bike", "1,786", 140], ["climb", "登った後のストレッチ", "gym_day1", "7,979", 190], ["photo", "写真展の見方", "mado_film", "6,650", 130]];
 
 /* ======================= state ======================= */
-var st={}; KEYS.forEach(function(k){ st[k]={n:0,settled:false,popped:false,optout:false}; });
-var seen={}, liked={}, bodies=[], slots=[];
-var on=true, rot=0, tilt={x:0,y:0}, drag=null, press=null, sc=1, ac=null, app='scroll';
-
+var st={}; KEYS.forEach(function(k){ st[k]={n:0,px:null,popped:false,optout:false}; });
+var counted={}, liked={}, bodies=[];
+var on=true, rot=0, drag=null, press=null, sc=1, ac=null, app='scroll', sheetK=null;
 var $=function(id){ return document.getElementById(id); };
 var wrap=$('wrap'), box=$('box'), phone=$('phone'), screen=$('screen'), layer=$('layer'), psvg=$('plants');
-var fScroll=$('fScroll'), fNote=$('fNote'), cols=$('cols'), prog=$('prog');
+var fScroll=$('fScroll'), fNote=$('fNote'), cols=$('cols');
 var toastEl=$('toast'), toastT=null;
 function toast(m){ toastEl.textContent=m; toastEl.setAttribute('data-on','1'); clearTimeout(toastT); toastT=setTimeout(function(){ toastEl.setAttribute('data-on','0'); },2000); }
+function rooted(k){ return st[k].n>=ROOT; }
 
-/* ======================= seed & plant art ======================= */
-/* stage art (7 stages): n=1 seed1 · 2–3 seed2 · 4–5 seed3 (5 = rooted) · 6–8 leaf · 9–11 flower1 · 12–14 flower2 · 15 flower3 */
-function artKey(n){ return n<2?'seed1':(n<4?'seed2':(n<MILES.leaf?'seed3':(n<MILES.bud?'leaf':(n<MILES.half?'flower1':(n<MILES.bloom?'flower2':'flower3'))))); }
-/* each seed stage is cropped to its own shape so the smallest one still reads; size grows by percentage instead */
-var SEEDVB={"climb": {"seed1": "36.0 41.6 28.1 28.1", "seed2": "24.1 27.0 51.7 51.7", "seed3": "15.9 16.4 68.2 68.2"}, "cook": {"seed1": "41.9 47.4 16.3 16.3", "seed2": "36.8 41.8 26.4 26.4", "seed3": "26.9 31.9 46.2 46.2"}, "clay": {"seed1": "34.6 40.6 30.8 30.8", "seed2": "31.8 37.8 36.3 36.3", "seed3": "19.9 23.8 60.3 60.3"}, "bike": {"seed1": "24.7 25.7 50.6 50.6", "seed2": "24.7 25.7 50.6 50.6", "seed3": "18.1 22.7 63.8 63.8"}, "photo": {"seed1": "20.1 22.1 62.7 62.7", "seed2": "17.9 17.9 67.1 67.1", "seed3": "16.3 14.8 70.4 70.4"}, "music": {"seed1": "50.2 31.6 24.2 24.2", "seed2": "24.4 18.1 51.2 51.2", "seed3": "24.4 30.4 51.2 51.2"}};
+/* ======================= art ======================= */
+function stageKey(n){ return STAGES[Math.max(1,Math.min(BLOOM,n))-1]; }
 function artSVG(k,key){ var vbx=(key.indexOf('seed')===0)?SEEDVB[k][key]:'0 0 100 100'; return '<svg viewBox="'+vbx+'" width="100%" height="100%" style="display:block;overflow:visible" aria-hidden="true">'+ART[k][key]+'</svg>'; }
-function seedSVG(k,s){ return artSVG(k,'seed'+(s||1)); }
-/* rooted plant sizes, ≈ +12% per stage */
-var PSIZE={seed3:58, leaf:76, flower1:86, flower2:98, flower3:112};
-function plantSize(k){ return PSIZE[artKey(st[k].n)]; }
-function baseY(){ return layer.clientHeight-14; }
-function slotX(k){ var W=layer.clientWidth, i=slots.indexOf(k); return W/12+i*(W/6); }
-function plantTopY(k){ var sz=plantSize(k); return baseY()-sz*0.75; }
-
+function baseY(){ return layer.clientHeight-10; }
+function plantX(k){ var W=layer.clientWidth, sz=SIZE[st[k].n], x=st[k].px==null?W/2:st[k].px; return Math.max(sz*0.32,Math.min(W-sz*0.32,x)); }
+function plantTopY(k){ return baseY()-SIZE[st[k].n]*0.72; }
 function drawPlants(growK){
   var W=layer.clientWidth, H=layer.clientHeight;
   psvg.setAttribute('viewBox','0 0 '+W+' '+H);
   psvg.textContent='';
-  slots.forEach(function(k){
-    var key=artKey(st[k].n), sz=PSIZE[key], x=slotX(k), b=baseY(), seedy=key.indexOf('seed')===0;
-    var y= seedy ? b-sz : b-sz*0.9;
+  KEYS.filter(rooted).forEach(function(k){
+    var n=st[k].n, key=stageKey(n), sz=SIZE[n], x=plantX(k), b=baseY();
     var g=document.createElementNS('http://www.w3.org/2000/svg','g');
     if(k===growK) g.setAttribute('class','grow');
-    g.innerHTML='<svg x="'+(x-sz/2)+'" y="'+y+'" width="'+sz+'" height="'+sz+'" viewBox="'+(seedy?SEEDVB[k][key]:'0 0 100 100')+'" overflow="visible">'+ART[k][key]+'</svg>'+
-      '<rect class="hit" x="'+(x-26)+'" y="'+(b-sz*0.95)+'" width="52" height="'+(sz*0.95)+'" rx="10"/>';
+    g.innerHTML='<svg x="'+(x-sz/2)+'" y="'+(b-sz*0.9)+'" width="'+sz+'" height="'+sz+'" viewBox="0 0 100 100" overflow="visible">'+ART[k][key]+'</svg>'+
+      '<rect class="hit" x="'+(x-sz*0.3)+'" y="'+(b-sz*0.85)+'" width="'+(sz*0.6)+'" height="'+(sz*0.85)+'" rx="10"/>';
     psvg.appendChild(g);
-    bindPlantPress(g.querySelector('.hit'),k);
+    g.querySelector('.hit').addEventListener('click',function(e){ e.stopPropagation(); tapFeedback(); openSheet(k,0); });
   });
 }
-function bloomArt(k){ return artSVG(k,'flower3'); }
 
-/* ======================= render intro / feeds ======================= */
-function renderProg(){
-  prog.textContent=''; var total=0;
-  KEYS.forEach(function(k){
-    var c=CAT[k], s=st[k], i=stageIdx(s.n); total+=s.n;
-    var marks=[MILES.settle,MILES.leaf,MILES.bud,MILES.half,MILES.bloom], d='';
-    marks.forEach(function(m){ d+='<span class="dot'+(s.n>=m?' on':'')+'"></span>'; });
-    var row=document.createElement('div'); row.className='prow';
-    row.innerHTML='<span class="sw" style="background:'+col(k)+'"></span>'+
-      '<span class="nm"><b>'+c.jp+'</b><span>'+(s.n? c.plant+' · '+STAGE_JP[i]+' · '+s.n+' 件' : c.plant+' · まだ')+'</span></span>'+
-      '<span class="dots" aria-label="成長 '+s.n+' / 15">'+d+'</span>'+
-      '<button type="button" class="plus" data-add="'+k+'" aria-label="'+c.jp+' を +3"'+(s.n>=MILES.bloom?' disabled':'')+'>+3</button>';
-    prog.appendChild(row);
-  });
-  $('dTotal').textContent=total+' 件';
-}
-prog.addEventListener('click',function(e){
-  var b=e.target.closest('[data-add]'); if(!b) return;
-  var k=b.getAttribute('data-add');
-  if(!st[k].settled && !seedOf(k)){
-    var W=layer.clientWidth; makeSeed(k, W*0.3+Math.random()*W*0.4, headH()+80+Math.random()*160);
-  }
-  st[k].n=Math.min(MILES.bloom, st[k].n+3);
-  after(k, CAT[k].jp+' 関心 +3');
-});
-var drop=$('drop'), ttl=$('ttl');
-function setTab(name){
-  drop.querySelectorAll('[data-dt]').forEach(function(b){ b.setAttribute('aria-selected',b.dataset.dt===name?'true':'false'); });
-  drop.querySelectorAll('[data-dp]').forEach(function(p){ p.hidden=p.dataset.dp!==name; });
-  if(name==='map') drawMap(); if(name==='col') colRows($('dCol'),null);
-}
-drop.querySelector('.dtabs').addEventListener('click',function(e){ var b=e.target.closest('[data-dt]'); if(b) setTab(b.dataset.dt); });
-
-/* ---- nearby clubs & classes: a simple vector map; tap a red pin → shop info ---- */
-var PINXY={climb:[[60,40],[235,88],[272,30]], cook:[[120,72],[172,142],[38,112]], clay:[[215,162],[96,160],[262,186]],
-           bike:[[76,78],[30,176],[140,190]], photo:[[186,30],[252,130],[112,34]], music:[[160,58],[206,106],[56,146]]};
-var HERE=[150,100], selPin=null;
-function walk(x,y){ var m=Math.round(Math.hypot(x-HERE[0],y-HERE[1])*9); return {m:m, min:Math.max(1,Math.round(m/80))}; }
-function drawMap(){
-  var svg=$('map'), h='';
-  h+='<rect width="300" height="210" fill="#e6e4e1"/>';
-  h+='<path d="M14 18 H112 Q124 18 124 30 V84 Q124 96 112 96 H26 Q14 96 14 84 Z" fill="#d7e0cf"/><text x="30" y="92" font-size="8">公園</text>';
-  h+='<path d="M-10 152 C 50 132 104 178 168 160 S 262 118 310 140" fill="none" stroke="#c6d7e0" stroke-width="13"/><text x="236" y="146" font-size="8">川</text>';
-  h+='<g stroke="#f6f5f4" stroke-width="7" fill="none" stroke-linecap="square"><path d="M0 60 H300"/><path d="M0 122 H300"/><path d="M90 0 V210"/><path d="M200 0 V210"/><path d="M0 206 L148 84"/></g>';
-  h+='<g stroke="#f6f5f4" stroke-width="3" fill="none"><path d="M0 30 H300"/><path d="M0 182 H300"/><path d="M40 0 V210"/><path d="M250 0 V210"/></g>';
-  h+='<rect x="192" y="52" width="16" height="16" rx="2" fill="#201e1d"/><text x="200" y="63.5" font-size="8.5" text-anchor="middle" style="fill:#f3f2f2">駅</text>';
-  h+='<circle cx="'+HERE[0]+'" cy="'+HERE[1]+'" r="12" fill="#0088b0" opacity=".16"/><circle cx="'+HERE[0]+'" cy="'+HERE[1]+'" r="4.5" fill="#0088b0" stroke="#f3f2f2" stroke-width="1.5"/>';
-  h+='<text x="'+(HERE[0]+9)+'" y="'+(HERE[1]+14)+'" font-size="8">現在地</text>';
-  var n=0;
-  KEYS.forEach(function(k){ CAT[k].shops.forEach(function(sh,i){
-    var xy=PINXY[k][i], id=k+':'+i, on=selPin===id, sc=on?1.35:1; n++;
-    h+='<g class="pin'+(on?' sel':'')+'" data-pin="'+id+'" transform="translate('+xy[0]+' '+xy[1]+') scale('+sc+')" role="button" aria-label="'+sh[0]+'">'+
-       '<rect x="-12" y="-28" width="24" height="30" fill="transparent"/>'+
-       '<path d="M0 0 C -5 -7 -8 -11 -8 -15 A8 8 0 1 1 8 -15 C 8 -11 5 -7 0 0 Z"/><circle cy="-15" r="2.8"/></g>';
-  }); });
-  svg.innerHTML=h;
-  $('mapCount').textContent='近くに '+n+' か所';
-}
-function showShop(id){
-  selPin=id; drawMap();
-  var k=id.split(':')[0], i=+id.split(':')[1], sh=CAT[k].shops[i], xy=PINXY[k][i], w=walk(xy[0],xy[1]);
-  $('shop').innerHTML='<div class="shop"><div class="sh"><span><b>'+sh[0]+'</b><span class="cat"><i style="background:'+col(k)+'"></i>'+CAT[k].jp+' · '+CAT[k].plant+'</span></span>'+
-    '<button type="button" class="x2" id="shopX" aria-label="閉じる">✕</button></div>'+
-    '<dl><dt>内容</dt><dd>'+sh[1]+'</dd><dt>距離</dt><dd>現在地から 約 '+w.m+' m · 徒歩 '+w.min+' 分</dd><dt>あなたの種</dt><dd>'+STAGE_JP[stageIdx(st[k].n)]+' · '+st[k].n+' 件</dd></dl>'+
-    '<div class="acts"><button type="button" data-act="route">ルート</button><button type="button" class="go" data-act="book">予約する</button></div></div>';
-}
-$('map').addEventListener('click',function(e){ var g=e.target.closest('[data-pin]'); if(g){ if(navigator.vibrate) navigator.vibrate(10); showShop(g.getAttribute('data-pin')); } });
-$('shop').addEventListener('click',function(e){
-  if(e.target.closest('#shopX')){ selPin=null; $('shop').textContent=''; drawMap(); return; }
-  var a=e.target.closest('[data-act]'); if(!a) return;
-  toast(a.dataset.act==='route'?'ルートを表示（デモはここまで）':'予約画面へ（デモはここまで）');
-});
-function openMapFor(k){ setDrop(true); setTab('map'); showShop(k+':0'); }
-
-/* ---- collection rows (shared by the dropdown and the interest sheet) ---- */
-function colRows(el,hk){
-  el.textContent='';
-  KEYS.forEach(function(q){
-    var cq=CAT[q], sq=st[q];
-    var row=document.createElement('div'); row.className='srow';
-    row.innerHTML='<span class="sd'+(sq.n?'':' dim')+'">'+artSVG(q,artKey(Math.max(1,sq.n)))+'</span>'+
-      '<span><b style="color:'+(q===hk?col(q):'inherit')+'">'+cq.jp+' · '+cq.plant+'</b><small>'+cq.lat+' · '+sq.n+' 件</small></span><span class="st">'+STAGE_JP[stageIdx(sq.n)]+'</span>';
-    el.appendChild(row);
-  });
-}
-function setDrop(open){ drop.hidden=!open; ttl.setAttribute('aria-expanded',open?'true':'false'); }
-ttl.addEventListener('click',function(e){ e.stopPropagation(); var open=drop.hidden; setDrop(open); if(open){ var cur=drop.querySelector('[data-dt][aria-selected="true"]').dataset.dt; setTab(cur); } });
-screen.addEventListener('pointerdown',function(e){ if(!drop.hidden && !e.target.closest('#drop') && !e.target.closest('#ttl')) setDrop(false); });
-drop.addEventListener('click',function(e){ var b=e.target.closest('[data-app]'); if(b) setApp(b.getAttribute('data-app')); });
-
+/* ======================= feeds ======================= */
 var HEART='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20.3C7 16.9 3.6 13.8 3.6 10.1 3.6 7.6 5.5 5.8 8 5.8c1.6 0 2.9.8 4 2.2 1.1-1.4 2.4-2.2 4-2.2 2.5 0 4.4 1.8 4.4 4.3 0 3.7-3.4 6.8-8.4 10.2z"/></svg>';
 var CMT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 0 1-12.4 7.5L3.5 21l1.4-4.6A8.5 8.5 0 1 1 20.5 12z"/></svg>';
 var SEND='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></svg>';
 var BM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>';
-
 SCROLL.forEach(function(p,i){
   var k=p[0], el=document.createElement('article');
   el.className='ig'; el.dataset.k=k; el.dataset.id='s'+i;
@@ -534,9 +443,8 @@ NOTES.forEach(function(p,i){
     '<div class="cmeta"><span class="ctag"><i style="background:'+col(k)+'"></i>'+p[2]+'</span><button type="button" class="nl" aria-pressed="false">♡ '+p[3]+'</button></div></div>';
   cols.appendChild(el);
 });
-renderProg();
 
-/* ======================= fit (desktop) / phone-only mode (mobile, QR) ======================= */
+/* ======================= fit / phone-only mode ======================= */
 var mobile=true;
 if(mobile) document.body.classList.add('mobile');
 var headEl=document.querySelector('.head');
@@ -544,55 +452,41 @@ function headH(){ return headEl.offsetHeight; }
 function fit(){
   screen.style.setProperty('--headh', headH()+'px');
   if(mobile){ sc=1; return; }
-  var byH=(window.innerHeight-190)/744, byW=(window.innerWidth-32)/440;
+  var byH=(window.innerHeight-150)/744, byW=(window.innerWidth-32)/440;
   sc=Math.max(0.4, Math.min(1, byH, byW));
   box.style.width=368*sc+'px'; box.style.height=744*sc+'px';
   wrap.style.padding=30*sc+'px';
 }
 fit(); window.addEventListener('resize',function(){ fit(); drawPlants(); });
 
-/* real-device gravity (iPhone needs a tap to grant motion access) */
-var devG=null;
+/* real-device gravity (iPhone asks on the first tap) */
+var devG=null, gotMotion=false, asked=false;
 var iOS=/iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-function onMotion(e){
-  var a=e.accelerationIncludingGravity; if(!a || a.x==null) return;
-  var k=0.1/9.8, sx=iOS?1:-1;
-  devG={ x:sx*a.x*k, y:-sx*a.y*k };
-}
-var gotMotion=false;
+function onMotion(e){ var a=e.accelerationIncludingGravity; if(!a||a.x==null) return; var k=0.1/9.8, sx=iOS?1:-1; devG={x:sx*a.x*k, y:-sx*a.y*k}; }
 function startMotion(){
   window.addEventListener('devicemotion',function(e){ gotMotion=true; onMotion(e); });
-  setTimeout(function(){
-    if(!gotMotion) toast('センサーの信号が届かない（表示している枠が遮断している可能性）');
-    else toast('重力センサー ON — 端末を傾けてみて');
-  },1500);
+  setTimeout(function(){ toast(gotMotion?'重力センサー ON — 端末を傾けてみて':'センサーの信号が届かない（表示している枠が遮断している可能性）'); },1500);
 }
-var asked=false;
 function askMotion(){
   if(asked) return; asked=true;
-  DeviceMotionEvent.requestPermission().then(function(r){
-    if(r==='granted'){ startMotion(); $('sens').hidden=true; }
-    else { asked=false; toast('センサーが許可されなかった'); }
-  }).catch(function(err){ asked=false; toast('センサーを要求できない：'+((err&&err.name)||'error')); });
+  DeviceMotionEvent.requestPermission().then(function(r){ if(r==='granted') startMotion(); else { asked=false; toast('センサーが許可されなかった'); } })
+    .catch(function(err){ asked=false; toast('センサーを要求できない：'+((err&&err.name)||'error')); });
 }
 if(mobile){
   if(window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission==='function'){
-    var sens=$('sens'); sens.hidden=false;
-    sens.addEventListener('click',askMotion);
     screen.addEventListener('click',function once(){ screen.removeEventListener('click',once); askMotion(); });
     setTimeout(function(){ toast('画面をタップすると重力センサーの許可を求めます'); },1000);
   } else if(window.DeviceMotionEvent){ startMotion(); }
-  else setTimeout(function(){ toast('この端末・ブラウザは重力センサー非対応'); },1000);
 }
 
-/* tap marker */
+/* tap marker for testing */
 var tapdot=document.createElement('div'); tapdot.className='tapdot'; document.body.appendChild(tapdot);
 function tapMove(e){ tapdot.style.left=e.clientX+'px'; tapdot.style.top=e.clientY+'px'; }
 document.addEventListener('pointerdown',function(e){ tapMove(e); tapdot.classList.add('on'); },true);
 document.addEventListener('pointermove',function(e){ if(tapdot.classList.contains('on')) tapMove(e); },true);
 ['pointerup','pointercancel'].forEach(function(ev){ document.addEventListener(ev,function(){ tapdot.classList.remove('on'); },true); });
 
-/* ======================= physics (v1.2: G 0.05 + gentle drift) ======================= */
+/* ======================= physics ======================= */
 function step(t){
   if(!drag) rot+=(0-rot)*0.035;
   if(!mobile) phone.style.transform='scale('+sc+') rotate('+rot+'deg)';
@@ -607,8 +501,7 @@ function step(t){
       if(!b.drag){
         b.vx+=gx+Math.sin(t*0.0011+b.ph)*0.012;
         b.vy+=gy+Math.cos(t*0.0008+b.ph*1.7)*0.014-0.012;
-        b.vx*=0.985; b.vy*=0.985;
-        b.x+=b.vx; b.y+=b.vy;
+        b.vx*=0.985; b.vy*=0.985; b.x+=b.vx; b.y+=b.vy;
       }
       if(b.x<b.r){ b.x=b.r; b.vx=Math.abs(b.vx)*0.45; }
       if(b.x>W-b.r){ b.x=W-b.r; b.vx=-Math.abs(b.vx)*0.45; }
@@ -622,7 +515,7 @@ function step(t){
         var nx=dx/d, ny=dy/d, o=(m-d)/2;
         if(!a.drag){ a.x-=nx*o; a.y-=ny*o; } if(!b.drag){ b.x+=nx*o; b.y+=ny*o; }
         var rv=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;
-        if(rv<0){ var k=-rv*0.7; a.vx-=nx*k; a.vy-=ny*k; b.vx+=nx*k; b.vy+=ny*k; }
+        if(rv<0){ var q=-rv*0.7; a.vx-=nx*q; a.vy-=ny*q; b.vx+=nx*q; b.vy+=ny*q; }
       }
     }
     for(i=0;i<B.length;i++){
@@ -634,84 +527,14 @@ function step(t){
   requestAnimationFrame(step);
 }
 requestAnimationFrame(step);
-
 function local(cx,cy){
   var r=layer.getBoundingClientRect();
   var dx=(cx-(r.left+r.width/2))/sc, dy=(cy-(r.top+r.height/2))/sc, th=-rot*Math.PI/180;
   return { x:dx*Math.cos(th)-dy*Math.sin(th)+layer.clientWidth/2, y:dx*Math.sin(th)+dy*Math.cos(th)+layer.clientHeight/2 };
 }
-function localDelta(dx,dy){
-  var th=-rot*Math.PI/180; dx/=sc; dy/=sc;
-  return { x:dx*Math.cos(th)-dy*Math.sin(th), y:dx*Math.sin(th)+dy*Math.cos(th) };
-}
+function localDelta(dx,dy){ var th=-rot*Math.PI/180; dx/=sc; dy/=sc; return { x:dx*Math.cos(th)-dy*Math.sin(th), y:dx*Math.sin(th)+dy*Math.cos(th) }; }
 
-/* ======================= seeds ======================= */
-function seedOf(k){ for(var i=0;i<bodies.length;i++) if(bodies[i].type===k) return bodies[i]; return null; }
-function makeSeed(k,x,y){
-  var el=document.createElement('div');
-  el.style.cssText='position:absolute;left:0;top:0;will-change:transform;pointer-events:auto;cursor:grab;touch-action:none;';
-  var inner=document.createElement('div'); inner.style.cssText='width:100%;height:100%;';
-  el.appendChild(inner); layer.appendChild(el);
-  var b={ type:k, x:x, y:Math.max(y,headH()+20), vx:(Math.random()-0.5)*2, vy:-2.5, r:4, tr:SEED_R[seedState(Math.max(1,st[k].n))], el:el, inner:inner, ph:Math.random()*6.28, drag:false };
-  inner.innerHTML=seedSVG(k,seedState(Math.max(1,st[k].n)));
-  bodies.push(b); bindDrag(b);
-  return b;
-}
-function refreshSeed(k,pop){
-  var b=seedOf(k); if(!b) return;
-  var s=seedState(st[k].n);
-  b.tr=SEED_R[s]; b.inner.innerHTML=seedSVG(k,s);
-  if(pop){ b.vy-=1.5; b.inner.animate([{transform:'scale(.8)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:420,easing:'ease-out'}); }
-}
-function bindDrag(b){
-  b.el.addEventListener('pointerdown',function(e){
-    e.stopPropagation(); e.preventDefault();
-    b.drag=true; b.px=e.clientX; b.py=e.clientY; b.x0=e.clientX; b.y0=e.clientY; b.el.setPointerCapture(e.pointerId); b.el.style.cursor='grabbing';
-    clearTimeout(b.lp);
-    b.lp=setTimeout(function(){
-      b.drag=false; b.el.style.cursor='grab';
-      if(navigator.vibrate) navigator.vibrate(20); beep([440]);
-      b.inner.animate([{transform:'scale(1)'},{transform:'scale(1.18)'},{transform:'scale(1)'}],{duration:320,easing:'ease-out'});
-      openSheet(b.type);
-    },500);
-  });
-  b.el.addEventListener('pointermove',function(e){
-    if(!b.drag) return;
-    if(Math.hypot(e.clientX-b.x0,e.clientY-b.y0)>8) clearTimeout(b.lp);
-    var d=localDelta(e.clientX-b.px,e.clientY-b.py); b.px=e.clientX; b.py=e.clientY;
-    b.x+=d.x; b.y+=d.y; b.vx=d.x*0.5; b.vy=d.y*0.5;
-  });
-  function end(){ clearTimeout(b.lp); b.drag=false; b.el.style.cursor='grab'; }
-  b.el.addEventListener('pointerup',end); b.el.addEventListener('pointercancel',end);
-}
-
-/* ======================= long press on a post ======================= */
-function onDown(post,e){
-  if(!on||press) return;
-  if(e.target.closest('.like,.nl')) return;
-  var p=local(e.clientX,e.clientY);
-  var ring=document.createElement('div');
-  ring.style.cssText='position:absolute;left:'+(p.x-26)+'px;top:'+(p.y-26)+'px;width:52px;height:52px;border-radius:50%;border:2px solid var(--color-accent);pointer-events:none;';
-  layer.appendChild(ring);
-  ring.animate([{transform:'scale(.2)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:500,easing:'ease-out',fill:'forwards'});
-  press={ post:post, p:p, ring:ring, x0:e.clientX, y0:e.clientY, t:setTimeout(fire,500) };
-}
-function cancel(){
-  var pr=press; if(!pr) return;
-  clearTimeout(pr.t); press=null;
-  pr.ring.animate([{opacity:1},{opacity:0}],{duration:180,fill:'forwards'}).onfinish=function(){ pr.ring.remove(); };
-}
-[fScroll,fNote].forEach(function(f){
-  f.addEventListener('pointerdown',function(e){ var post=e.target.closest('[data-id]'); if(post) onDown(post,e); });
-  f.addEventListener('pointermove',function(e){ if(press&&Math.hypot(e.clientX-press.x0,e.clientY-press.y0)>8) cancel(); });
-  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){ f.addEventListener(ev,cancel); });
-  f.addEventListener('contextmenu',function(e){ e.preventDefault(); });
-  f.addEventListener('scroll',function(){
-    var d=f.scrollTop-(f._ls||0); f._ls=f.scrollTop; var k=Math.max(-3,Math.min(3,d*0.04));
-    bodies.forEach(function(b){ if(!b.drag){ b.vy+=k*0.4; b.vx+=(Math.random()-0.5)*Math.abs(k)*0.5; } });
-  },{passive:true});
-});
-
+/* ======================= sound & haptics ======================= */
 function beep(freqs){
   try{
     ac=ac||new (window.AudioContext||window.webkitAudioContext)();
@@ -724,109 +547,153 @@ function beep(freqs){
     });
   }catch(err){}
 }
+function buzz(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
+function tapFeedback(){ buzz(15); beep([440]); }
 
-function fire(){
+/* ======================= floating seeds (stages 1–3) ======================= */
+function seedOf(k){ for(var i=0;i<bodies.length;i++) if(bodies[i].type===k) return bodies[i]; return null; }
+function makeSeed(k,x,y){
+  var el=document.createElement('div');
+  el.style.cssText='position:absolute;left:0;top:0;will-change:transform;pointer-events:auto;cursor:pointer;touch-action:none;';
+  var inner=document.createElement('div'); inner.style.cssText='width:100%;height:100%;';
+  el.appendChild(inner); layer.appendChild(el);
+  var b={ type:k, x:x, y:Math.max(y,headH()+20), vx:(Math.random()-0.5)*2, vy:-2.5, r:4, tr:SIZE[1]/2, el:el, inner:inner, ph:Math.random()*6.28, drag:false };
+  inner.innerHTML=artSVG(k,'seed1');
+  bodies.push(b); bindSeed(b);
+  return b;
+}
+function bindSeed(b){
+  /* tap (no movement) → this interest's menu; move → drag */
+  b.el.addEventListener('pointerdown',function(e){
+    e.stopPropagation(); e.preventDefault();
+    b.drag=true; b.moved=false; b.px=e.clientX; b.py=e.clientY; b.x0=e.clientX; b.y0=e.clientY;
+    b.el.setPointerCapture(e.pointerId);
+  });
+  b.el.addEventListener('pointermove',function(e){
+    if(!b.drag) return;
+    if(Math.hypot(e.clientX-b.x0,e.clientY-b.y0)>8) b.moved=true;
+    var d=localDelta(e.clientX-b.px,e.clientY-b.py); b.px=e.clientX; b.py=e.clientY;
+    b.x+=d.x; b.y+=d.y; b.vx=d.x*0.5; b.vy=d.y*0.5;
+  });
+  b.el.addEventListener('pointerup',function(){
+    var wasTap=b.drag && !b.moved; b.drag=false;
+    if(wasTap){ tapFeedback(); b.inner.animate([{transform:'scale(1)'},{transform:'scale(1.15)'},{transform:'scale(1)'}],{duration:300,easing:'ease-out'}); openSheet(b.type,0); }
+  });
+  b.el.addEventListener('pointercancel',function(){ b.drag=false; });
+}
+
+/* ======================= one count per post (long press OR like) ======================= */
+function onDown(post,e){
+  if(!on||press) return;
+  if(e.target.closest('.like,.nl')) return;
+  var p=local(e.clientX,e.clientY);
+  var ring=document.createElement('div');
+  ring.style.cssText='position:absolute;left:'+(p.x-26)+'px;top:'+(p.y-26)+'px;width:52px;height:52px;border-radius:50%;border:2px solid var(--color-accent);pointer-events:none;';
+  layer.appendChild(ring);
+  ring.animate([{transform:'scale(.2)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:500,easing:'ease-out',fill:'forwards'});
+  press={ post:post, p:p, ring:ring, x0:e.clientX, y0:e.clientY, t:setTimeout(firePress,500) };
+}
+function cancel(){
+  var pr=press; if(!pr) return;
+  clearTimeout(pr.t); press=null;
+  pr.ring.animate([{opacity:1},{opacity:0}],{duration:180,fill:'forwards'}).onfinish=function(){ pr.ring.remove(); };
+}
+function firePress(){
   var pr=press; if(!pr) return;
   press=null; pr.ring.remove();
-  var id=pr.post.dataset.id, k=pr.post.dataset.k;
-  if(seen[id]){
-    var r=document.createElement('div');
-    r.style.cssText='position:absolute;left:'+(pr.p.x-26)+'px;top:'+(pr.p.y-26)+'px;width:52px;height:52px;border-radius:50%;border:2px solid color-mix(in srgb,var(--color-text) 40%,transparent);';
-    layer.appendChild(r);
-    r.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)',opacity:0}],{duration:360}).onfinish=function(){ r.remove(); };
-    toast('この投稿からはもう種が出ている');
+  countPost(pr.post, pr.p.x, pr.p.y, true);
+}
+[fScroll,fNote].forEach(function(f){
+  f.addEventListener('pointerdown',function(e){ var post=e.target.closest('[data-id]'); if(post) onDown(post,e); });
+  f.addEventListener('pointermove',function(e){ if(press&&Math.hypot(e.clientX-press.x0,e.clientY-press.y0)>8) cancel(); });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){ f.addEventListener(ev,cancel); });
+  f.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+  f.addEventListener('scroll',function(){
+    var d=f.scrollTop-(f._ls||0); f._ls=f.scrollTop; var q=Math.max(-3,Math.min(3,d*0.04));
+    bodies.forEach(function(b){ if(!b.drag){ b.vy+=q*0.4; b.vx+=(Math.random()-0.5)*Math.abs(q)*0.5; } });
+  },{passive:true});
+  f.addEventListener('click',function(e){
+    var btn=e.target.closest('.like,.nl'); if(!btn) return;
+    var post=btn.closest('[data-id]'), id=post.dataset.id;
+    liked[id]=!liked[id]; btn.setAttribute('aria-pressed',liked[id]?'true':'false');
+    if(liked[id]){ var r=btn.getBoundingClientRect(), p=local(r.left+r.width/2,r.top+r.height/2); countPost(post,p.x,p.y,false); }
+  });
+});
+
+function countPost(post,x,y,fromPress){
+  var id=post.dataset.id, k=post.dataset.k;
+  if(counted[id]){
+    if(fromPress){
+      var r=document.createElement('div');
+      r.style.cssText='position:absolute;left:'+(x-26)+'px;top:'+(y-26)+'px;width:52px;height:52px;border-radius:50%;border:2px solid color-mix(in srgb,var(--color-text) 40%,transparent);';
+      layer.appendChild(r);
+      r.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)',opacity:0}],{duration:360}).onfinish=function(){ r.remove(); };
+      toast('この投稿はもう数えた');
+    }
     return;
   }
-  seen[id]=true; pr.post.classList.add('seen-mark');
-  if(navigator.vibrate) navigator.vibrate(35);
-  if(!st[k].settled && !seedOf(k)){
-    st[k].n+=1; makeSeed(k,pr.p.x,pr.p.y); beep([660]);
-    after(k,'種が生まれた（'+CAT[k].jp+'）');
+  if(!on){ if(fromPress) toast('seed mode が OFF'); return; }
+  if(st[k].n>=BLOOM){ counted[id]=true; toast(CAT[k].plant+'はもう満開'); return; }
+  counted[id]=true; post.classList.add('seen-mark');
+  buzz(35);
+  st[k].lastX=x;
+  if(st[k].n===0){
+    st[k].n=1; makeSeed(k,x,y); beep([660]); toast('種が生まれた（'+CAT[k].jp+'）');
     return;
   }
-  flyDot(k,pr.p.x,pr.p.y,function(){ st[k].n+=1; after(k,null,true); });
+  flyDot(k,x,y,function(){ grow(k); });
 }
 function flyDot(k,x,y,done){
   var tx,ty;
-  if(st[k].settled){ tx=slotX(k); ty=plantTopY(k); } else { var b=seedOf(k); tx=b.x; ty=b.y; }
+  if(rooted(k)){ tx=plantX(k); ty=plantTopY(k); } else { var b=seedOf(k); tx=b?b.x:x; ty=b?b.y:y; }
   var dot=document.createElement('div');
   dot.style.cssText='position:absolute;left:0;top:0;width:14px;height:14px;border-radius:50%;background:'+col(k)+';';
   layer.appendChild(dot);
-  dot.animate([{transform:'translate('+(x-7)+'px,'+(y-7)+'px) scale(1.4)'},{transform:'translate('+(tx-7)+'px,'+(ty-7)+'px) scale(.4)'}],{duration:520,easing:'cubic-bezier(.5,0,.3,1)'}).onfinish=function(){ dot.remove(); done(); };
+  var fired=false; function fin(){ if(fired) return; fired=true; dot.remove(); done(); }
+  dot.animate([{transform:'translate('+(x-7)+'px,'+(y-7)+'px) scale(1.4)'},{transform:'translate('+(tx-7)+'px,'+(ty-7)+'px) scale(.4)'}],{duration:520,easing:'cubic-bezier(.5,0,.3,1)',fill:'forwards'}).onfinish=fin;
+  setTimeout(fin,580);   /* fallback: growth never waits on the animation event */
 }
 
-/* likes = +1 (v1.2) */
-function likePost(btn){
-  var post=btn.closest('[data-id]'), id=post.dataset.id, k=post.dataset.k;
-  if(liked[id]){ liked[id]=false; btn.setAttribute('aria-pressed','false'); return; }
-  liked[id]=true; btn.setAttribute('aria-pressed','true');
-  if(!on){ st[k].n+=1; after(k,'関心 +1（'+CAT[k].jp+'）'); return; }
-  if(!st[k].settled && !seedOf(k)){ var r=btn.getBoundingClientRect(), p=local(r.left+r.width/2,r.top); st[k].n+=1; makeSeed(k,p.x,p.y); beep([660]); after(k,'関心 +1（'+CAT[k].jp+'）'); return; }
-  var rr=btn.getBoundingClientRect(), pp=local(rr.left+rr.width/2,rr.top+rr.height/2);
-  flyDot(k,pp.x,pp.y,function(){ st[k].n+=1; after(k,'関心 +1（'+CAT[k].jp+'）',true); });
-}
-fScroll.addEventListener('click',function(e){ var b=e.target.closest('.like'); if(b) likePost(b); });
-fNote.addEventListener('click',function(e){ var b=e.target.closest('.nl'); if(b) likePost(b); });
-
-/* ======================= growth (v1.2 milestones) ======================= */
-function after(k,msg,pop){
+/* ======================= growth: 7 steps ======================= */
+function grow(k){
   var s=st[k], c=CAT[k];
-  if(msg) toast(msg);
-  if(!s.settled && s.n>=MILES.settle){
-    s.settled=true;
+  s.n=Math.min(BLOOM,s.n+1);
+  var key=stageKey(s.n);
+  if(s.n<ROOT){
     var b=seedOf(k);
-    if(b){
-      b.el.animate([{opacity:1},{opacity:0}],{duration:360,fill:'forwards'}).onfinish=function(){ b.el.remove(); };
-      bodies=bodies.filter(function(x){ return x!==b; });
-    }
-    if(slots.indexOf(k)<0) slots.push(k);
-    beep([587,784]); if(navigator.vibrate) navigator.vibrate([12,40,12]);
-    setTimeout(function(){ toast(c.jp+' 定着（5 件）— 根を張った'); },500);
-    drawPlants(k);
-  } else if(s.settled){
-    drawPlants(pop?k:null);
-    if(pop) beep([660+Math.min(8,stageIdx(s.n))*40]);
+    if(b){ b.tr=SIZE[s.n]/2; b.inner.innerHTML=artSVG(k,key); b.vy-=1.5; b.inner.animate([{transform:'scale(.8)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:420,easing:'ease-out'}); }
+    beep([660+s.n*60]); toast(c.plant+' · '+STAGE_JP[s.n]);
+  } else if(s.n===ROOT){
+    /* root straight below the last tap */
+    s.px=s.lastX;
+    var sb=seedOf(k);
+    if(sb){ bodies=bodies.filter(function(x){ return x!==sb; }); sb.el.animate([{opacity:1},{opacity:0}],{duration:360,fill:'forwards'}).onfinish=function(){ sb.el.remove(); }; }
+    drawPlants(k); beep([587,784]); buzz([12,40,12]); toast(c.plant+'が根を張った · 葉');
   } else {
-    refreshSeed(k,pop);
-    if(pop) beep([660+seedState(s.n)*60]);
+    drawPlants(k); beep([660+s.n*50]); toast(c.plant+' · '+STAGE_JP[s.n]);
+    if(s.n===BLOOM && !s.popped && !s.optout){ s.popped=true; beep([523,659,784]); buzz([12,40,12]); setTimeout(function(){ showBloom(k); },800); }
   }
-  if(s.n===MILES.leaf) setTimeout(function(){ toast(c.jp+' 葉が開いた（6 件）'); },500);
-  if(s.n===MILES.bud) setTimeout(function(){ toast(c.jp+' 蕾（9 件）'); },500);
-  if(s.n===MILES.half) setTimeout(function(){ toast(c.jp+' 半開（12 件）'); },500);
-  if(s.n>=MILES.bloom && !s.popped && !s.optout){
-    s.popped=true; beep([523,659,784]); if(navigator.vibrate) navigator.vibrate([12,40,12]);
-    setTimeout(function(){ showBloom(k); },800);
-  }
-  renderProg();
+  if(sheetK===k) renderSheet(k);
 }
 
-/* ======================= interest sheet (seed / plant long press) ======================= */
-function bindPlantPress(el,k){
-  var tm=null;
-  el.addEventListener('pointerdown',function(e){ e.stopPropagation(); tm=setTimeout(function(){ if(navigator.vibrate) navigator.vibrate(20); beep([440]); openSheet(k); },500); });
-  ['pointerup','pointerleave','pointercancel'].forEach(function(ev){ el.addEventListener(ev,function(){ clearTimeout(tm); }); });
-}
+/* ======================= bottom sheet: おすすめ / 近くのコミュニティ / 図鑑 ======================= */
 var pages=$('pages'), sheetEl=$('sheet');
-function showPage(n,smooth){
-  pages.scrollTo({left:n*pages.clientWidth,behavior:smooth?'smooth':'auto'});
-  markPage(n);
-}
 function markPage(n){
   sheetEl.querySelectorAll('.tabs button').forEach(function(b){ b.setAttribute('aria-selected',+b.dataset.pg===n?'true':'false'); });
   sheetEl.querySelectorAll('.pgdots i').forEach(function(d,i){ d.classList.toggle('on',i===n); });
 }
+function showPage(n,smooth){ pages.scrollTo({left:n*pages.clientWidth,behavior:smooth?'smooth':'auto'}); markPage(n); }
 pages.addEventListener('scroll',function(){ markPage(Math.round(pages.scrollLeft/Math.max(1,pages.clientWidth))); },{passive:true});
 sheetEl.querySelector('.tabs').addEventListener('click',function(e){ var b=e.target.closest('[data-pg]'); if(b) showPage(+b.dataset.pg,true); });
 
-function openSheet(k){
-  var c=CAT[k], s=st[k], st1=Math.max(1,Math.min(3,seedState(Math.max(1,s.n))));
+function renderSheet(k){
+  var c=CAT[k], s=st[k];
+  $('ihead').innerHTML='<div class="ihead"><span class="sd">'+artSVG(k,stageKey(Math.max(1,s.n)))+'</span><span><b>'+c.jp+'</b><span>'+c.plant+' · '+STAGE_JP[s.n]+' · '+s.n+' / 7　<i style="font-family:\'Source Serif 4\',serif">'+c.lat+'</i></span></span></div>';
+  /* おすすめ */
   var rec=$('pgRec'); rec.textContent='';
-  var head=document.createElement('div'); head.className='ihead';
-  head.innerHTML='<span class="sd">'+artSVG(k,artKey(Math.max(1,s.n)))+'</span><span><b>'+c.jp+'</b><span>'+c.plant+' · '+STAGE_JP[stageIdx(s.n)]+' · '+s.n+' 件　<i style="font-family:\'Source Serif 4\',serif">'+c.lat+'</i></span></span>';
-  rec.appendChild(head);
   var items=[];
-  SCROLL.forEach(function(p,i){ if(p[0]===k) items.push({t:p[2],a:p[1],l:p[3],seen:!!seen['s'+i]}); });
-  NOTES.forEach(function(p,i){ if(p[0]===k) items.push({t:p[1],a:p[2],l:p[3],seen:!!seen['n'+i]}); });
+  SCROLL.forEach(function(p,i){ if(p[0]===k) items.push({t:p[2],a:p[1],l:p[3],seen:!!counted['s'+i]}); });
+  NOTES.forEach(function(p,i){ if(p[0]===k) items.push({t:p[1],a:p[2],l:p[3],seen:!!counted['n'+i]}); });
   items.sort(function(a,b){ return (a.seen?1:0)-(b.seen?1:0); });
   items.slice(0,10).forEach(function(it){
     var r=document.createElement('div'); r.className='rec';
@@ -834,52 +701,121 @@ function openSheet(k){
     r.addEventListener('click',function(){ toast('投稿を開く（デモはここまで）'); });
     rec.appendChild(r);
   });
-  colRows($('pgCol'),k);
-  setDrop(false);
-  sheetEl.setAttribute('data-on','1');
-  requestAnimationFrame(function(){ showPage(0,false); });
+  /* 近くのコミュニティ */
+  drawMap(k);
+  /* 図鑑 */
+  renderGrid(k);
 }
-$('sheetX').addEventListener('click',function(){ sheetEl.setAttribute('data-on','0'); });
+function openSheet(k,page,pin){
+  sheetK=k; selPin=pin||null; $('shop').textContent='';
+  renderSheet(k);
+  if(pin) showShop(pin);
+  sheetEl.setAttribute('data-on','1');
+  requestAnimationFrame(function(){ showPage(page||0,false); });
+}
+$('sheetX').addEventListener('click',function(){ sheetEl.setAttribute('data-on','0'); sheetK=null; });
+
+/* ---- map: this interest's places only; tap a red pin → place info ---- */
+var PINXY={climb:[[60,40],[235,88],[272,30]], cook:[[120,72],[172,142],[38,112]], clay:[[215,162],[96,160],[262,186]],
+           bike:[[76,78],[30,176],[140,190]], photo:[[186,30],[252,130],[112,34]], music:[[160,58],[206,106],[56,146]]};
+var HERE=[150,100], selPin=null;
+function walk(x,y){ var m=Math.round(Math.hypot(x-HERE[0],y-HERE[1])*9); return {m:m, min:Math.max(1,Math.round(m/80))}; }
+function drawMap(k){
+  var h='<rect width="300" height="210" fill="#e6e4e1"/>';
+  h+='<path d="M14 18 H112 Q124 18 124 30 V84 Q124 96 112 96 H26 Q14 96 14 84 Z" fill="#d7e0cf"/><text x="30" y="92" font-size="8">公園</text>';
+  h+='<path d="M-10 152 C 50 132 104 178 168 160 S 262 118 310 140" fill="none" stroke="#c6d7e0" stroke-width="13"/><text x="236" y="146" font-size="8">川</text>';
+  h+='<g stroke="#f6f5f4" stroke-width="7" fill="none" stroke-linecap="square"><path d="M0 60 H300"/><path d="M0 122 H300"/><path d="M90 0 V210"/><path d="M200 0 V210"/><path d="M0 206 L148 84"/></g>';
+  h+='<g stroke="#f6f5f4" stroke-width="3" fill="none"><path d="M0 30 H300"/><path d="M0 182 H300"/><path d="M40 0 V210"/><path d="M250 0 V210"/></g>';
+  h+='<rect x="192" y="52" width="16" height="16" rx="2" fill="#201e1d"/><text x="200" y="63.5" font-size="8.5" text-anchor="middle" style="fill:#f3f2f2">駅</text>';
+  h+='<circle cx="'+HERE[0]+'" cy="'+HERE[1]+'" r="12" fill="#0088b0" opacity=".16"/><circle cx="'+HERE[0]+'" cy="'+HERE[1]+'" r="4.5" fill="#0088b0" stroke="#f3f2f2" stroke-width="1.5"/>';
+  h+='<text x="'+(HERE[0]+9)+'" y="'+(HERE[1]+14)+'" font-size="8">現在地</text>';
+  CAT[k].shops.forEach(function(sh,i){
+    var xy=PINXY[k][i], id=k+':'+i, on2=selPin===id, s2=on2?1.4:1.15;
+    h+='<g class="pin'+(on2?' sel':'')+'" data-pin="'+id+'" transform="translate('+xy[0]+' '+xy[1]+') scale('+s2+')" role="button" aria-label="'+sh[0]+'">'+
+       '<rect x="-12" y="-28" width="24" height="30" fill="transparent"/>'+
+       '<path d="M0 0 C -5 -7 -8 -11 -8 -15 A8 8 0 1 1 8 -15 C 8 -11 5 -7 0 0 Z"/><circle cy="-15" r="2.8"/></g>';
+  });
+  $('map').innerHTML=h;
+  $('mapCount').textContent=CAT[k].jp+'のコミュニティ '+CAT[k].shops.length+' か所';
+}
+function showShop(id){
+  selPin=id;
+  var k=id.split(':')[0], i=+id.split(':')[1], sh=CAT[k].shops[i], xy=PINXY[k][i], w=walk(xy[0],xy[1]);
+  drawMap(k);
+  $('shop').innerHTML='<div class="shop"><div class="sh"><span><b>'+sh[0]+'</b><span class="cat"><i style="background:'+col(k)+'"></i>'+CAT[k].jp+' · '+CAT[k].plant+'</span></span>'+
+    '<button type="button" class="x2" id="shopX" aria-label="閉じる">✕</button></div>'+
+    '<dl><dt>内容</dt><dd>'+sh[1]+'</dd><dt>距離</dt><dd>現在地から 約 '+w.m+' m · 徒歩 '+w.min+' 分</dd><dt>あなたの種</dt><dd>'+STAGE_JP[st[k].n]+' · '+st[k].n+' / 7</dd></dl>'+
+    '<div class="acts"><button type="button" data-act="route">ルート</button><button type="button" class="go" data-act="book">参加する</button></div></div>';
+}
+$('map').addEventListener('click',function(e){ var g=e.target.closest('[data-pin]'); if(g){ buzz(10); showShop(g.getAttribute('data-pin')); } });
+$('shop').addEventListener('click',function(e){
+  if(e.target.closest('#shopX')){ selPin=null; $('shop').textContent=''; drawMap(sheetK); return; }
+  var a=e.target.closest('[data-act]'); if(!a) return;
+  toast(a.dataset.act==='route'?'ルートを表示（デモはここまで）':'参加の申し込みへ（デモはここまで）');
+});
+
+/* ---- 図鑑: 3 × 2 grid; tap → the plant's 7 stages (not yet reached = grey) ---- */
+function renderGrid(hk){
+  var el=$('pgCol'); el.textContent='';
+  var g=document.createElement('div'); g.className='cgrid';
+  KEYS.forEach(function(q){
+    var sq=st[q], b=document.createElement('button');
+    b.type='button'; b.className='cell'+(q===hk?' cur':''); b.dataset.k=q;
+    b.innerHTML='<span class="ca'+(sq.n?'':' dim')+'">'+artSVG(q,stageKey(Math.max(1,sq.n)))+'</span><b>'+CAT[q].plant+'</b><small>'+CAT[q].jp+' · '+sq.n+'/7</small>';
+    g.appendChild(b);
+  });
+  el.appendChild(g);
+}
+function renderDetail(q){
+  var el=$('pgCol'), sq=st[q], c=CAT[q], h='';
+  h+='<div class="cdet"><button type="button" class="back" data-back="1">← 図鑑</button>';
+  h+='<h5>'+c.plant+'　<span style="font-size:12px;font-weight:400">'+c.jp+'</span></h5><div class="lat">'+c.lat+' · '+sq.n+' / 7</div><div class="stages7">';
+  STAGES.forEach(function(key,i){
+    var reached=sq.n>=i+1;
+    h+='<figure class="'+(sq.n===i+1?'now':'')+'"><span class="sa'+(reached?'':' gray')+'">'+artSVG(q,key)+'</span><figcaption>'+STAGE_JP[i+1]+'</figcaption></figure>';
+  });
+  el.innerHTML=h+'</div></div>';
+}
+$('pgCol').addEventListener('click',function(e){
+  var b=e.target.closest('.cell'); if(b){ buzz(8); renderDetail(b.dataset.k); return; }
+  if(e.target.closest('[data-back]')) renderGrid(sheetK);
+});
 
 /* ======================= bloom card ======================= */
 var bloomK=null;
 function showBloom(k){
   var c=CAT[k]; bloomK=k;
-  $('bloomArt').innerHTML=bloomArt(k);
-  $('bH').textContent=c.plant+'が咲いた · '+c.jp+' を 15 件見た';
-  $('bS').textContent='近くで、やってみる';
+  $('bloomArt').innerHTML=artSVG(k,'flower3');
+  $('bH').textContent=c.plant+'が満開 · '+c.jp+' の投稿に 7 回ふれた';
+  $('bS').textContent='近くのコミュニティへ';
   var ul=$('bList'); ul.textContent='';
   c.shops.forEach(function(r){ var li=document.createElement('li'); li.innerHTML='<span>'+r[0]+'</span><small>'+r[1]+'</small>'; ul.appendChild(li); });
   $('bloom').hidden=false;
 }
 $('bX').addEventListener('click',function(){ $('bloom').hidden=true; });
-$('bGo').addEventListener('click',function(){ $('bloom').hidden=true; if(bloomK) openMapFor(bloomK); });
-$('bOff').addEventListener('click',function(){ if(bloomK) st[bloomK].optout=true; $('bloom').hidden=true; toast('入口を OFF にした（植物はそのまま育つ）'); });
+$('bGo').addEventListener('click',function(){ $('bloom').hidden=true; if(bloomK) openSheet(bloomK,1,bloomK+':0'); });
+$('bOff').addEventListener('click',function(){ if(bloomK) st[bloomK].optout=true; $('bloom').hidden=true; toast('入口を OFF にした（植物はそのまま）'); });
 
 /* ======================= seed mode ======================= */
 $('tog').addEventListener('click',function(){
   on=!on;
   this.setAttribute('aria-pressed',on?'true':'false');
-  $('togl').textContent=on?'種 · ON':'種 · OFF';
+  $('togl').textContent=on?'seed mode ON':'seed mode OFF';
   layer.style.opacity=on?1:0; psvg.style.opacity=on?1:0;
   if(!on) cancel();
-  toast(on?'種モード ON':'種モード OFF（蓄積は続く）');
+  toast(on?'seed mode ON':'seed mode OFF（数えるのも止める）');
 });
 
-/* ======================= app switch ======================= */
+/* ======================= feed ⇄ note ======================= */
 function setApp(m){
   app=m;
-  $('aScroll').setAttribute('aria-pressed',m==='scroll'?'true':'false');
-  $('aNote').setAttribute('aria-pressed',m==='note'?'true':'false');
+  document.querySelectorAll('.htabs [data-app]').forEach(function(b){ b.setAttribute('aria-pressed',b.dataset.app===m?'true':'false'); });
   fScroll.hidden=m!=='scroll'; fNote.hidden=m!=='note';
-  drop.querySelectorAll('[data-app]').forEach(function(b){ b.setAttribute('aria-pressed',b.getAttribute('data-app')===m?'true':'false'); });
-  $('appTitle').textContent=m==='scroll'?'ホーム':'発見';
   cancel();
 }
-$('aScroll').addEventListener('click',function(){ setApp('scroll'); });
-$('aNote').addEventListener('click',function(){ setApp('note'); });
+document.querySelector('.htabs').addEventListener('click',function(e){ var b=e.target.closest('[data-app]'); if(b) setApp(b.dataset.app); });
 
-/* ======================= tilt: drag the bezel, eases back on release (Claude Design) ======================= */
+/* ======================= tilt: drag the bezel, eases back ======================= */
 function center(){ var r=phone.getBoundingClientRect(); return { x:r.left+r.width/2, y:r.top+r.height/2 }; }
 wrap.addEventListener('pointerdown',function(e){
   if(e.target!==wrap && e.target!==box && e.target!==phone) return;
@@ -897,7 +833,11 @@ function endDrag(){ if(!drag) return; drag=null; wrap.style.cursor='grab'; }
 wrap.addEventListener('pointerup',endDrag); wrap.addEventListener('pointercancel',endDrag);
 
 /* ======================= version menu ======================= */
-if(0)$('ver').addEventListener('change',function(){ var v=this.value; if(v==='1.4.1'){ location.href='v1-4-1.html'; return; } if(v==='1.4'){ location.href='v1-4.html'; return; } if(v==='1.3.2'){ location.href='v1-3-2.html'; return; } if(v==='1.3.1'){ location.href='v1-3-1.html'; return; } if(v==='1.3'){ location.href='v1-3.html'; return; } if(v!=='1.4.2') location.href='legacy.html?v='+v; });
+if(0)$('ver').addEventListener('change',function(){
+  var v=this.value, map={'1.4.2':'v1-4-2.html','1.4.1':'v1-4-1.html','1.4':'v1-4.html','1.3.2':'v1-3-2.html','1.3.1':'v1-3-1.html','1.3':'v1-3.html'};
+  if(map[v]){ location.href=map[v]; return; }
+  if(v!=='1.4.3') location.href='legacy.html?v='+v;
+});
 })();
 </script>
 
